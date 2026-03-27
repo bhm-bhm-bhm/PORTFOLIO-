@@ -180,7 +180,26 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    // 4. 드래그 로직 (중복 클릭 방지)
+    // 4. 슬라이더 포커스 및 드래그 로직
+    function updateSliderFocus() {
+        const items = document.querySelectorAll('.project-item');
+        const containerCenter = projectContainer.scrollLeft + (projectContainer.offsetWidth / 2);
+
+        items.forEach(item => {
+            const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+            const dist = Math.abs(containerCenter - itemCenter);
+            
+            // 중앙에서 300px 이내면 활성화
+            if (dist < 300) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    projectContainer.addEventListener('scroll', updateSliderFocus);
+
     let isDown = false, startX, scrollLeft, isMoved = false;
     projectContainer.addEventListener('mousedown', (e) => {
         isDown = true; isMoved = false;
@@ -213,6 +232,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target === 'about') { aboutFile = data; localStorage.setItem('about_file', JSON.stringify(data)); }
             else { projects[currentProjectIndex] = data; saveProjects(); }
             renderAll();
+            // 렌더링 후 포커스 재계산
+            setTimeout(updateSliderFocus, 100);
         };
         reader.readAsDataURL(file);
     }
@@ -225,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. 안전 실행 (초기 렌더링 먼저 수행)
     renderAll();
+    setTimeout(updateSliderFocus, 300); // 초기 포커스 설정
     
     // 카카오 상태 체크는 나중에 따로 (충돌 방지)
     setTimeout(() => {

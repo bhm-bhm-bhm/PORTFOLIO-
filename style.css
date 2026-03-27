@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --bg-color: #000000;
     --accent-color: #ffffff;
     --text-primary: #ffffff;
@@ -157,6 +157,15 @@ body {
     scroll-snap-align: center;
     position: relative;
     transition: var(--transition);
+    opacity: 0.2; /* 기본적으로 흐릿하게 */
+    filter: blur(8px); /* 블러 효과 추가 */
+    transform: scale(0.9); /* 살짝 작게 */
+}
+
+.project-item.active {
+    opacity: 1; /* 활성화 시 선명하게 */
+    filter: blur(0);
+    transform: scale(1); /* 원래 크기로 */
 }
 
 .square-box {
