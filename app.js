@@ -249,9 +249,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveToLocal() {
-        localStorage.setItem('portfolio_projects', JSON.stringify(projects));
-        localStorage.setItem('about_file', JSON.stringify(aboutFile));
-        console.log('Progress Saved Successfully');
+        try {
+            localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+            localStorage.setItem('about_file', JSON.stringify(aboutFile));
+            console.log('초고속 로컬 저장 완료');
+            return true;
+        } catch (e) {
+            console.error('저장 실패:', e);
+            alert('⚠️ 브라우저 내부 저장 용량 한계(약 5MB)에 도달했습니다!\n더 이상 거대한 용량을 추가할 수 없습니다. \n- 고화질/고용량 파일은 반드시 "압축"하여 업로드해 주세요.\n- 방금 추가한 파일은 시스템 보호를 위해 저장되지 않았습니다.');
+            return false;
+        }
     }
 
     // --- 5. 슬라이더 포커스/드래그/화살표 ---
@@ -310,12 +317,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleFileUpload(file, target) {
         if (!file) return;
+
+        // [핵심해결] 3MB 초과 시 선제적 차단 (브라우저 다운 방지 및 기존 데이터 보존)
+        const maxSize = 3 * 1024 * 1024; 
+        if (file.size > maxSize) {
+            alert(`⚠️ 파일이 너무 무겁습니다! (${(file.size/1024/1024).toFixed(1)}MB)\n- 브라우저 데이터 보존을 위해 3MB 이하로 '압축된 이미지/PDF'만 올려주세요.`);
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
             const data = { name: file.name, type: file.type.includes('pdf') ? 'pdf' : 'image', url: e.target.result };
+            
+            // 기존 데이터 안전하게 임시 백업
+            const backupAbout = aboutFile;
+            const backupProj = projects[currentProjectIndex];
+
             if (target === 'about') aboutFile = data;
             else projects[currentProjectIndex] = data;
-            saveToLocal();
+            
+            // 깐깐한 저장 및 실패 시 자동 롤백 프로세스
+            const isSaved = saveToLocal();
+            if (!isSaved) {
+                if (target === 'about') aboutFile = backupAbout;
+                else projects[currentProjectIndex] = backupProj;
+            }
             renderAll();
         };
         reader.readAsDataURL(file);
