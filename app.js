@@ -103,7 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 3. 렌더링 (보안 적용: 로그인 상태에서만 + 버튼 노출) ---
+    // 5분마다 자동 저장 (300,000ms)
+    setInterval(() => {
+        if (isLoggedIn) {
+            saveToLocal();
+            console.log('5-Minute Auto-Backup Complete');
+        }
+    }, 300000);
+
+    // --- 3. 렌더링 (사용자 맞춤형 정교한 로직) ---
     function renderAll() {
         renderAbout();
         renderProjects();
@@ -115,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAbout() {
         aboutSlot.innerHTML = '';
         if (aboutFile) {
+            // [데이터가 있을 때] + 버튼을 숨기고 내용만 보여줌
             const container = document.createElement('div');
             container.className = 'thumbnail-wrapper';
             container.style.height = '100%';
@@ -124,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.innerHTML = `<img src="${aboutFile.url}" class="thumbnail-img">`;
             }
 
+            // [편집 모드일 때만] 삭제 버튼 노출
             if (isEditMode && isLoggedIn) {
                 const del = document.createElement('button');
                 del.className = 'delete-btn';
@@ -138,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             aboutSlot.appendChild(container);
         } else {
-            // 로그인 상태인 관리자에게만 + 버튼 노출
+            // [데이터가 없을 때] 로그인 상태라면 + 버튼 노출
             if (isLoggedIn) {
                 const addBtn = document.createElement('div');
                 addBtn.className = 'add-cta-main';
@@ -146,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 addBtn.onclick = (e) => { e.stopPropagation(); aboutInput.click(); };
                 aboutSlot.appendChild(addBtn);
             } else {
-                aboutSlot.innerHTML = `<p style="opacity: 0.15; font-size: 0.8rem; letter-spacing: 3px;">관리자 전용 공간</p>`;
+                aboutSlot.innerHTML = `<p style="opacity: 0.15; font-size: 0.8rem; letter-spacing: 3px;">PRIVATE SPACE</p>`;
             }
         }
     }
@@ -160,12 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
             box.className = 'square-box glass-card';
             
             if (proj) {
+                // [데이터가 있을 때] 내용만 노출
                 if (proj.type === 'pdf') {
                     box.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual" style="width: 80px; height: 110px;">PDF</div><p class="pdf-name">${proj.name}</p></div>`;
                 } else {
                     box.innerHTML = `<img src="${proj.url}" class="thumbnail-img">`;
                 }
                 
+                // [편집 모드일 때만] 삭제 버튼 노출
                 if (isEditMode && isLoggedIn) {
                     const del = document.createElement('button');
                     del.className = 'delete-btn';
@@ -179,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     box.onclick = () => { if (!isMoved) window.open(proj.url, '_blank'); };
                 }
             } else {
-                // 로그인 상태인 관리자에게만 + 버튼 노출
+                // [데이터가 없을 때] 로그인 상태인 관리자에게만 + 버튼 노출
                 if (isLoggedIn) {
                     const addBtn = document.createElement('div');
                     addBtn.className = 'add-cta-main';
@@ -198,20 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 4. 저장 및 자동 저장 (5분) ---
+    // --- 4. 기타 연동 (자동 로그인 제거 로직 포함) ---
     function saveToLocal() {
         localStorage.setItem('portfolio_projects', JSON.stringify(projects));
         localStorage.setItem('about_file', JSON.stringify(aboutFile));
         console.log('Progress Saved Successfully');
     }
-
-    // 5분마다 자동 저장 (300,000ms)
-    setInterval(() => {
-        if (isLoggedIn) {
-            saveToLocal();
-            console.log('5-Minute Auto-Backup Complete');
-        }
-    }, 300000);
 
     // --- 5. 슬라이더 포커스/드래그/화살표 ---
     const nextBtn = document.getElementById('next-btn');
