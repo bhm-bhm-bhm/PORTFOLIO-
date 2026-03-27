@@ -67,25 +67,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateAuthUI(user) {
         const loggedOutView = document.getElementById('logged-out-view');
         const loggedInView = document.getElementById('logged-in-view');
-        const adminElements = document.querySelectorAll('.mini-edit-btn, .reset-link');
 
         if (user) {
+            // [핵심해결] 바디에 로그인 클래스를 부여하여 모든 편집 버튼을 CSS로 즉시 노출
+            document.body.classList.add('logged-in');
+            
             if (loggedOutView) loggedOutView.style.display = 'none';
             if (loggedInView) loggedInView.style.display = 'flex';
             document.getElementById('user-nickname').innerText = user.properties.nickname;
             document.getElementById('user-avatar').src = user.properties.thumbnail_image || '';
-            
-            // 버그 수정: 로그인이 확인되는 즉시 모든 편집 버튼을 보이게 함
-            adminElements.forEach(el => {
-                el.style.display = 'flex';
-                el.style.visibility = 'visible';
-                el.style.opacity = '1';
-            });
         } else {
+            // 로그아웃 시 클래스 제거하여 편집 버튼 일괄 숨김
+            document.body.classList.remove('logged-in');
+            
             if (loggedOutView) loggedOutView.style.display = 'block';
             if (loggedInView) loggedInView.style.display = 'none';
             
-            adminElements.forEach(el => el.style.display = 'none');
             isEditMode = false;
             document.body.classList.remove('body-editing');
         }
