@@ -3,8 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const aboutFileInput = document.getElementById('about-file-input');
     const directProjectFileInput = document.getElementById('direct-project-file-input');
     const aboutContent = document.getElementById('about-content');
+    const editModeToggle = document.getElementById('edit-mode-toggle');
+    const aboutUploadBtn = document.getElementById('about-upload-btn');
     
     let currentSlotIndex = null;
+    let isEditMode = false;
 
     // Load state from localStorage
     let projects = JSON.parse(localStorage.getItem('portfolio_projects')) || new Array(6).fill(null);
@@ -14,21 +17,37 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProjects();
     renderAbout();
 
+    // --- Edit Mode Toggle Logic ---
+    editModeToggle.onclick = () => {
+        isEditMode = !isEditMode;
+        document.body.classList.toggle('body-editing', isEditMode);
+        editModeToggle.classList.toggle('active', isEditMode);
+        
+        // Hide/Show upload button for about based on state or keep it for empty
+        renderAbout();
+        renderProjects();
+    };
+
     // --- About Me Logic ---
     function renderAbout() {
         if (aboutPdf) {
             aboutContent.innerHTML = `
-                <p class="success-text">✅ 나의 소개가 업로드되었습니다.</p>
-                <div class="uploaded-status glass-card" onclick="window.open('${aboutPdf}', '_blank')">
+                <div class="is-editing-indicator">EDIT MODE ACTIVE</div>
+                <div class="uploaded-status glass-card" onclick="${!isEditMode ? `window.open('${aboutPdf}', '_blank')` : ''}">
                     <!-- PDF Visual (Styled via CSS) -->
                 </div>
                 <div class="about-info-text">
+                    <p class="success-text">나의 소개 PDF</p>
                     <button class="view-btn" onclick="window.open('${aboutPdf}', '_blank')">열기</button>
-                    <button class="remove-btn" onclick="removeAboutPdf()">삭제</button>
+                    ${isEditMode ? `<button class="remove-btn" onclick="removeAboutPdf()">삭제</button>` : ''}
                 </div>
             `;
+            aboutUploadBtn.style.display = isEditMode ? 'block' : 'none';
+            aboutUploadBtn.textContent = '소개 PDF 교체';
         } else {
             aboutContent.innerHTML = `<p class="placeholder-text">이곳에 소개 내용을 입력하거나 PDF 파일을 업로드하세요.</p>`;
+            aboutUploadBtn.style.display = 'block';
+            aboutUploadBtn.textContent = '소개 PDF 업로드';
         }
     }
 
@@ -73,7 +92,17 @@ document.addEventListener('DOMContentLoaded', () => {
             box.className = 'square-box glass-card';
             
             if (project) {
-                // If PDF, show visual document card
+                // Delete button for editing mode
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-overlay-btn';
+                delBtn.innerHTML = '&times;';
+                delBtn.title = '프로젝트 삭제';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    removeProject(index);
+                };
+                projectItem.appendChild(delBtn);
+
                 if (project.type === 'pdf') {
                     box.innerHTML = `
                         <div class="pdf-thumbnail">
@@ -84,7 +113,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (project.type === 'image') {
                     box.innerHTML = `<img src="${project.url}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`;
                 }
-                box.onclick = () => window.open(project.url, '_blank');
+                
+                if (!isEditMode) {
+                    box.onclick = () => window.open(project.url, '_blank');
+                } else {
+                    box.title = "편집 모드에서는 삭제 버튼을 사용해 주세요.";
+                }
+
             } else {
                 // Empty -> Direct File Picker
                 box.classList.add('add-project-cta');
@@ -99,6 +134,14 @@ document.addEventListener('DOMContentLoaded', () => {
             projectItem.appendChild(box);
             projectsContainer.appendChild(projectItem);
         });
+    }
+
+    function removeProject(index) {
+        if (confirm(`프로젝트 ${index + 1}을(를) 삭제하시겠습니까?`)) {
+            projects[index] = null;
+            localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+            renderProjects();
+        }
     }
 
     directProjectFileInput.onchange = (e) => {
@@ -127,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clear-storage');
     if (clearBtn) {
         clearBtn.onclick = () => {
-            if(confirm('모든 데이터를 초기화하시겠습니까?')) {
+            if(confirm('모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
                 localStorage.clear();
                 projects = new Array(6).fill(null);
                 aboutPdf = null;
