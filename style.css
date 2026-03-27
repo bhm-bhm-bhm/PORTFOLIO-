@@ -45,6 +45,42 @@ body {
     text-transform: uppercase;
 }
 
+/* 동적 포트폴리오 타이틀 관리 UI */
+.logo-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.title-edit-btn {
+    position: absolute;
+    right: -45px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: #fff;
+    cursor: pointer;
+    display: none !important; /* 로그인 전에는 무조건 숨김 */
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.title-edit-btn:hover {
+    background: rgba(255,255,255,0.15);
+    color: var(--kakao-yellow);
+    border-color: var(--kakao-yellow);
+    transform: scale(1.1) rotate(10deg);
+}
+
+/* 로그인 성공 시 에디트 버튼 노출 */
+body.logged-in .title-edit-btn {
+    display: flex !important;
+}
+
 .auth-ui-container {
     position: absolute;
     right: 4rem;

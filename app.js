@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 데이터 로드
     let projects = JSON.parse(localStorage.getItem('portfolio_projects')) || new Array(6).fill(null);
     let aboutFile = JSON.parse(localStorage.getItem('about_file')) || null;
+    let portfolioName = localStorage.getItem('portfolio_name') || null;
 
     // --- 1. 카카오 SDK 초기화 (안정적인 1.x) ---
     const KAKAO_KEY = '84bc6e0cb6d58fc4fca663bb14964778';
@@ -61,6 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateAuthUI(res);
                 } catch(e) { console.error('UI Update Error:', e); }
                 renderAll(); // 즉각적인 렌더링 강제 실행
+                
+                // 로그인 직후 이름이 설정되어 있지 않다면 최초 1회 즉시 프롬프트 오픈
+                if (!portfolioName) {
+                    setTimeout(() => {
+                        const defaultName = res?.properties?.nickname || res?.kakao_account?.profile?.nickname || '';
+                        const newName = prompt('환영합니다! 상단에 표시될 포트폴리오 이름(영문 등)을 설정해주세요:', defaultName);
+                        if (newName) {
+                            portfolioName = newName.trim();
+                            localStorage.setItem('portfolio_name', portfolioName);
+                            renderTitle();
+                        }
+                    }, 400); // 렌더링이 안정화될 수 있도록 아주 짧은 지연
+                }
             },
             fail: (err) => {
                 console.error(err);
@@ -131,11 +145,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. 렌더링 (사용자 맞춤형 정교한 로직) ---
     function renderAll() {
+        renderTitle();
         renderAbout();
         renderProjects();
         updateEditButtonStates();
         // 포커스 재계산은 렌더링 직후 수행
         setTimeout(updateSliderFocus, 100);
+    }
+
+    function renderTitle() {
+        const titleEl = document.getElementById('portfolio-title-text');
+        if (titleEl) {
+            titleEl.innerText = portfolioName ? `${portfolioName.toUpperCase()}'S PORTFOLIO` : 'WEBPORTFOLIO';
+        }
     }
 
     function renderAbout() {
@@ -268,6 +290,20 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAll();
         };
     });
+
+    const editTitleBtn = document.getElementById('edit-title-btn');
+    if (editTitleBtn) {
+        editTitleBtn.onclick = () => {
+            if (!isLoggedIn) { alert('로그인이 필요합니다.'); return; }
+            const currentName = portfolioName || '';
+            const newName = prompt('포트폴리오에 표시될 새로운 이름을 입력하세요:', currentName);
+            if (newName !== null) {
+                portfolioName = newName.trim();
+                localStorage.setItem('portfolio_name', portfolioName);
+                renderTitle();
+            }
+        };
+    }
 
     if (aboutInput) aboutInput.onchange = (e) => handleFileUpload(e.target.files[0], 'about');
     if (projectInput) projectInput.onchange = (e) => handleFileUpload(e.target.files[0], 'project');
