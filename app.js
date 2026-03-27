@@ -17,27 +17,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. 카카오 SDK 안전 초기화
     const KAKAO_KEY = '84bc6e0cb6d58fc4fca663bb14964778';
-    try {
-        if (window.Kakao && !Kakao.isInitialized()) {
-            Kakao.init(KAKAO_KEY);
-            console.log('Kakao SDK Initialized');
+    function initializeKakao() {
+        try {
+            if (window.Kakao && !Kakao.isInitialized()) {
+                Kakao.init(KAKAO_KEY);
+                console.log('Kakao SDK Ready');
+            }
+        } catch (e) {
+            console.error('Initial Kakao setup failed:', e);
         }
-    } catch (e) {
-        console.warn('Kakao SDK Initialization Skipped:', e);
     }
+    initializeKakao();
 
     // 2. 카카오 로그인/로그아웃 함수 (안전 모드 - 자동 재시도)
     window.loginWithKakao = function() {
         console.log('Login attempt started...');
-        if (!window.Kakao || !Kakao.Auth || !Kakao.isInitialized()) {
-            console.warn('Kakao SDK not ready yet. Retrying in 1s...');
-            initKakao(); // 재초기화 시도
-            setTimeout(window.loginWithKakao, 1000); // 1초 뒤 자동 재시도
+        if (!window.Kakao || !window.Kakao.Auth) {
+            console.warn('Kakao SDK not loaded yet. Retrying in 1s...');
+            setTimeout(window.loginWithKakao, 1000);
             return;
         }
+        
+        if (!Kakao.isInitialized()) {
+            initializeKakao();
+        }
+
         Kakao.Auth.login({
             success: fetchUserInfo,
-            fail: (err) => { console.error(err); }
+            fail: (err) => { console.error('Login Error:', err); }
         });
     };
 
