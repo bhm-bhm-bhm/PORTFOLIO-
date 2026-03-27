@@ -34,10 +34,10 @@ body {
 }
 
 .centered-logo {
-    font-size: 2.2rem; /* 훨씬 크고 시원하게 변경 */
-    font-weight: 800;
-    letter-spacing: 10px; /* 크기가 커진 만큼 자간 통계적 안정화 */
-    background: linear-gradient(90deg, #fff, #555);
+    font-size: 3.2rem; /* 압도적으로 시원하게 대폭 확대 */
+    font-weight: 900; /* 존재감을 위해 굵기 최대화 */
+    letter-spacing: 8px; /* 크기에 맞춰 완벽한 황금비율 자간으로 재조정 */
+    background: linear-gradient(90deg, #fff, #888); /* 가독성을 위한 밝은 그라데이션 업그레이드 */
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
