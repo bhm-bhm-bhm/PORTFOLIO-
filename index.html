@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEBPORTPOILO | EDITABLE</title>
+    <title>WEBPORTPOILO | HORIZONTAL</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap"
+        rel="stylesheet">
 </head>
-<body class="glass-theme">
+
+<body class="glass-theme dark-mode">
     <header class="site-header">
         <h1 class="centered-logo">WEBPORTPOILO</h1>
         <div class="edit-toggle-container">
             <button id="edit-mode-toggle" class="edit-icon-btn" title="편집 모드">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
@@ -22,28 +27,33 @@
         </div>
     </header>
 
-    <section class="main-video-section">
-        <div class="video-container">
-            <video autoplay loop muted playsinline id="hero-video">
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-fire-burning-in-a-dark-forest-4003-large.mp4" type="video/mp4">
-            </video>
-        </div>
-    </section>
-
     <main class="content-container">
+        <!-- 상단으로 이동한 나의 소개 -->
         <section class="intro-section" id="about">
             <div class="side-label">나의 소개</div>
             <div class="large-box glass-card" id="about-slot-container">
                 <div id="about-display-area" style="width:100%; height:100%;">
-                    </div>
+                </div>
                 <input type="file" id="about-file-input" accept=".pdf,image/*" style="display: none;">
             </div>
         </section>
-        
-        <section class="projects-grid-section">
-            <div class="projects-grid" id="projects-container"></div>
+
+        <!-- 옆으로 넘기는 프로젝트 슬라이더 -->
+        <section class="projects-slider-section">
+            <div class="slider-header">
+                <div class="side-label">프로젝트</div>
+                <div class="slider-controls">
+                    <button class="slider-nav-btn" id="prev-btn" title="이전">&larr;</button>
+                    <button class="slider-nav-btn" id="next-btn" title="다음">&rarr;</button>
+                </div>
+            </div>
+            <div class="slider-wrapper">
+                <div class="projects-horizontal-track" id="projects-container">
+                    <!-- JS가 슬라이드 아이템을 생성합니다 -->
+                </div>
+            </div>
         </section>
-        
+
         <input type="file" id="direct-project-file-input" style="display: none;">
     </main>
 
@@ -54,4 +64,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>

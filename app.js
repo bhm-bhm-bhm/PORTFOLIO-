@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectContainer = document.getElementById('projects-container');
     const projectInput = document.getElementById('direct-project-file-input');
     const editBtn = document.getElementById('edit-mode-toggle');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
 
     let isEditMode = false;
     let currentProjectIndex = null;
@@ -19,18 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAbout() {
         aboutSlot.innerHTML = '';
         if (aboutFile) {
-            // 파일이 있을 때: 썸네일 표시
             const container = document.createElement('div');
             container.className = 'thumbnail-wrapper';
             container.style.height = '100%';
             
             if (aboutFile.type === 'pdf') {
-                container.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p>${aboutFile.name}</p></div>`;
+                container.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p class="pdf-name">${aboutFile.name}</p></div>`;
             } else {
                 container.innerHTML = `<img src="${aboutFile.url}" class="thumbnail-img">`;
             }
 
-            // 편집 모드 삭제 버튼
             if (isEditMode) {
                 const del = document.createElement('button');
                 del.className = 'delete-btn';
@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             aboutSlot.appendChild(container);
         } else {
-            // 파일이 없을 때: + 버튼
             aboutSlot.innerHTML = `<div class="add-cta-main" onclick="document.getElementById('about-file-input').click()">+</div>`;
         }
     }
@@ -58,14 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (proj) {
                 box.innerHTML = proj.type === 'pdf' ? 
-                    `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p>${proj.name}</p></div>` : 
+                    `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p class="pdf-name">${proj.name}</p></div>` : 
                     `<img src="${proj.url}" class="thumbnail-img">`;
                 
                 if (isEditMode) {
                     const del = document.createElement('button');
                     del.className = 'delete-btn';
                     del.innerHTML = '&times;';
-                    del.onclick = () => { projects[i] = null; saveProjects(); renderProjects(); };
+                    del.onclick = (e) => { 
+                        e.stopPropagation(); 
+                        projects[i] = null; saveProjects(); renderProjects(); 
+                    };
                     item.appendChild(del);
                 } else {
                     box.onclick = () => window.open(proj.url, '_blank');
@@ -78,6 +80,18 @@ document.addEventListener('DOMContentLoaded', () => {
             item.appendChild(box);
             projectContainer.appendChild(item);
         });
+    }
+
+    // --- 슬라이더 네비게이션 ---
+    if (prevBtn && nextBtn) {
+        prevBtn.onclick = () => {
+            const scrollWidth = projectContainer.clientWidth / 2;
+            projectContainer.scrollBy({ left: -scrollWidth, behavior: 'smooth' });
+        };
+        nextBtn.onclick = () => {
+            const scrollWidth = projectContainer.clientWidth / 2;
+            projectContainer.scrollBy({ left: scrollWidth, behavior: 'smooth' });
+        };
     }
 
     // --- 이벤트 리스너 ---
@@ -109,6 +123,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveProjects() { localStorage.setItem('portfolio_projects', JSON.stringify(projects)); }
+
+    const clearBtn = document.getElementById('clear-storage');
+    if (clearBtn) {
+        clearBtn.onclick = () => {
+            if(confirm('모든 데이터를 초기화하시겠습니까?')) {
+                localStorage.clear();
+                projects = new Array(6).fill(null);
+                aboutFile = null;
+                renderAll();
+                location.reload();
+            }
+        };
+    }
 
     renderAll();
 });
