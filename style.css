@@ -46,9 +46,10 @@ body {
 
 .edit-toggle-container {
     position: absolute;
-    right: 3rem;
+    right: 1.5rem; 
     top: 50%;
     transform: translateY(-50%);
+    z-index: 100;
 }
 
 .edit-icon-btn {
@@ -113,8 +114,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
-.video-overlay-text { position: absolute; font-size: 8rem; font-weight: 900; letter-spacing: -2px; opacity: 0.15; text-shadow: 0 0 40px rgba(0, 255, 255, 0.5); }
+video { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
 
 /* Main Content Layout */
 .content-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
@@ -126,7 +126,7 @@ video { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
 .glass-btn { padding: 1rem 2.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; border-radius: 50px; cursor: pointer; letter-spacing: 1px; transition: var(--transition); }
 .glass-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: #fff; transform: translateY(-3px); }
 
-/* PDF 썸네일 Visuals */
+/* PDF ?�네??Visuals */
 .uploaded-status { width: 120px; height: 160px; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid var(--accent-color); border-radius: 8px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; position: relative; }
 .uploaded-status::before { content: 'PDF'; color: var(--accent-color); font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; }
 
@@ -170,7 +170,7 @@ video { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
     color: #fff;
     border: none;
     border-radius: 50%;
-    display: none; /* JS로 제어 */
+    display: none; /* JS�??�어 */
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -267,3 +267,5 @@ video { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
     justify-content: center;
     align-items: center;
 }
+
+
