@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 aboutSlot.appendChild(del);
             } else {
-                container.onclick = () => { if (!isMoved) window.open(aboutFile.url, '_blank'); };
+                container.onclick = () => { window.open(aboutFile.url, '_blank'); };
             }
             aboutSlot.appendChild(container);
         } else {
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     item.appendChild(del);
                 } else {
-                    box.onclick = () => { if (!isMoved) window.open(proj.url, '_blank'); };
+                    box.onclick = () => { window.open(proj.url, '_blank'); };
                 }
             } else {
                 // [데이터가 없을 때] 로그인 상태인 관리자에게만 + 버튼 노출
@@ -252,18 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     projectContainer.addEventListener('scroll', updateSliderFocus);
 
-    let isDown = false, startX, scrollLeft, isMoved = false;
-    projectContainer.addEventListener('mousedown', (e) => {
-        isDown = true; isMoved = false; startX = e.pageX - projectContainer.offsetLeft; scrollLeft = projectContainer.scrollLeft;
-        projectContainer.style.scrollBehavior = 'auto';
-    });
-    projectContainer.addEventListener('mouseleave', () => { isDown = false; });
-    projectContainer.addEventListener('mouseup', () => { isDown = false; projectContainer.style.scrollBehavior = 'smooth'; });
-    projectContainer.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        const x = e.pageX - projectContainer.offsetLeft;
-        if (Math.abs(x - startX) > 5) { isMoved = true; e.preventDefault(); projectContainer.scrollLeft = scrollLeft - (x - startX) * 2; }
-    });
+    // 드래그 기능 제거됨 (화살표 전용 탐색)
 
     // --- 6. 기타 보조 ---
     function updateEditButtonStates() {

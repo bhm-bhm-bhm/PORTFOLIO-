@@ -146,7 +146,6 @@ body {
     overflow-x: auto;
     padding: 5rem 15vw;
     scroll-snap-type: x mandatory;
-    cursor: grab;
 }
 
 .projects-horizontal-track::-webkit-scrollbar { display: none; }
@@ -325,8 +324,10 @@ body.logged-in .reset-link {
 
 .user-profile-bar {
     display: flex;
+    flex-direction: row; /* 명시적으로 가로 정렬 */
     align-items: center;
     gap: 15px;
+    white-space: nowrap; /* 텍스트 줄바꿈 강제 방지 */
 }
 
 .avatar-img-round {
@@ -335,6 +336,7 @@ body.logged-in .reset-link {
     border-radius: 50%;
     background-color: #d9d9d9;
     object-fit: cover;
+    flex-shrink: 0; /* 우그러짐 완벽 방지 */
 }
 
 .nickname-text-simple {
@@ -342,6 +344,7 @@ body.logged-in .reset-link {
     font-weight: 500;
     color: #fff;
     letter-spacing: 1px;
+    white-space: nowrap; /* 우그러짐 완벽 방지 */
 }
 
 .toggle-triangle {
