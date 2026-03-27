@@ -144,8 +144,10 @@ body {
     display: flex;
     gap: 50px;
     overflow-x: auto;
-    padding: 5rem 15vw;
+    /* [핵심해결] 어떤 화면 크기에서도 첫/마지막 아이템이 정확히 중앙에 올 수 있도록 수학적 여백(Padding) 부여 */
+    padding: 5rem calc(50vw - 300px);
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
 }
 
 .projects-horizontal-track::-webkit-scrollbar { display: none; }
