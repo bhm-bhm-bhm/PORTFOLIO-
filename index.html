@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEBPORTPOILO</title>
+    <title>WEBPORTPOILO | DARK</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-    <meta name="description" content="나의 웹 포트폴리오 사이트">
 </head>
-<body>
+<body class="dark-theme">
     <header class="site-header">
         <h1 class="centered-logo">WEBPORTPOILO</h1>
     </header>
@@ -18,9 +17,10 @@
     <section class="main-video-section">
         <div class="video-container">
             <video autoplay loop muted playsinline id="hero-video">
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-toddler-walking-on-the-grass-in-a-park-4648-large.mp4" type="video/mp4">
+                <!-- 멈추지 않고 걷는 사람의 모습 (Mixkit / Pexels 소스) -->
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-man-running-on-the-spot-in-front-of-a-white-wall-4161-large.mp4" type="video/mp4">
             </video>
-            <div class="video-overlay-text">메인 영상</div>
+            <div class="video-overlay-text">NEVER STOP</div>
         </div>
     </section>
 
@@ -28,15 +28,20 @@
         <!-- 나의 소개 섹션 -->
         <section class="intro-section" id="about">
             <div class="side-label">나의 소개</div>
-            <div class="content-box large-box">
-                <p class="placeholder-text">이곳에 소개 내용을 입력하거나 나중에 페이지로 이동하는 링크를 설정할 수 있습니다.</p>
+            <div class="content-box large-box about-container">
+                <div id="about-content" class="about-info">
+                    <p class="placeholder-text">이곳에 소개 내용을 입력하거나 PDF 파일을 업로드하세요.</p>
+                </div>
+                <!-- 소개 PDF 업로드 버튼 -->
+                <button class="upload-btn" onclick="document.getElementById('about-file-input').click()">소개 PDF 업로드</button>
+                <input type="file" id="about-file-input" accept=".pdf" style="display: none;">
             </div>
         </section>
 
         <!-- 프로젝트 그리드 섹션 -->
         <section class="projects-grid-section">
             <div class="projects-grid" id="projects-container">
-                <!-- JavaScript가 여기에 프로젝트 카드를 생성합니다 -->
+                <!-- JS가 카드를 생성합니다 -->
             </div>
         </section>
     </main>
@@ -49,28 +54,32 @@
             <form id="add-project-form">
                 <div class="form-group">
                     <label for="project-title">프로젝트 이름</label>
-                    <input type="text" id="project-title" required placeholder="예: 나의 웹 프로젝트 01">
+                    <input type="text" id="project-title" required placeholder="프로젝트 명칭">
                 </div>
                 <div class="form-group">
                     <label>콘텐츠 타입</label>
                     <div class="type-selector">
                         <label><input type="radio" name="project-type" value="pdf" checked> PDF</label>
-                        <label><input type="radio" name="project-type" value="image"> JPG/이미지</label>
-                        <label><input type="radio" name="project-type" value="web"> 웹사이트 (URL)</label>
+                        <label><input type="radio" name="project-type" value="image"> 이미지</label>
+                        <label><input type="radio" name="project-type" value="web"> 웹 URL</label>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="project-url">파일 경로 또는 URL</label>
-                    <input type="text" id="project-url" required placeholder="예: assets/my-project.pdf 또는 https://example.com">
+                    <label>파일 또는 URL</label>
+                    <div class="file-input-wrapper">
+                        <input type="text" id="project-url" placeholder="URL 입력 또는 파일 선택">
+                        <button type="button" class="file-pick-btn" onclick="document.getElementById('project-file-input').click()">내 컴퓨터에서 파일 선택</button>
+                        <input type="file" id="project-file-input" style="display: none;">
+                    </div>
                 </div>
                 <button type="submit" class="submit-btn">저장하기</button>
-                <button type="button" id="clear-storage" class="danger-btn">모두 초기화 (개발용)</button>
+                <button type="button" id="clear-storage" class="danger-btn">전체 초기화</button>
             </form>
         </div>
     </div>
 
     <footer class="footer">
-        <p>&copy; 2026 WEBPORTPOILO</p>
+        <p>&copy; 2026 WEBPORTPOILO. All Growth Recorded.</p>
     </footer>
 
     <script src="app.js"></script>
