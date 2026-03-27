@@ -57,10 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
             url: '/v2/user/me',
             success: (res) => {
                 isLoggedIn = true;
-                updateAuthUI(res);
-                renderAll();
+                try {
+                    updateAuthUI(res);
+                } catch(e) { console.error('UI Update Error:', e); }
+                renderAll(); // 즉각적인 렌더링 강제 실행
             },
-            fail: (err) => console.error(err)
+            fail: (err) => {
+                console.error(err);
+                alert('계정 정보를 가져오지 못했습니다. 다시 시도해주세요.');
+            }
         });
     }
 
@@ -74,8 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (loggedOutView) loggedOutView.style.display = 'none';
             if (loggedInView) loggedInView.style.display = 'flex';
-            document.getElementById('user-nickname').innerText = user.properties.nickname;
-            document.getElementById('user-avatar').src = user.properties.thumbnail_image || '';
+            
+            // 안전한 데이터를 추출하여 예외 방지 (에러 시 렌더링이 멈추는 현상 완벽 차단)
+            const nickname = user?.properties?.nickname || user?.kakao_account?.profile?.nickname || '관리자';
+            const avatarUrl = user?.properties?.thumbnail_image || user?.kakao_account?.profile?.thumbnail_image_url || '';
+            
+            const nickEl = document.getElementById('user-nickname');
+            const avatarEl = document.getElementById('user-avatar');
+            if(nickEl) nickEl.innerText = nickname;
+            if(avatarEl) avatarEl.src = avatarUrl;
+            
         } else {
             // 로그아웃 시 클래스 제거하여 편집 버튼 일괄 숨김
             document.body.classList.remove('logged-in');
@@ -87,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('body-editing');
         }
     }
+
 
     // 프로필 메뉴 토글 (사이드 메뉴 스타일)
     window.toggleProfileMenu = function() {
