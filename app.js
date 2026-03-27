@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aboutFile) {
             const container = document.createElement('div');
             container.className = 'thumbnail-wrapper';
-            container.style.height = '1000%'; // Full height container
+            container.style.height = '100%';
             
             if (aboutFile.type === 'pdf') {
                 container.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p class="pdf-name" style="font-size: 1.5rem; margin-top: 10px;">${aboutFile.name}</p></div>`;
@@ -41,11 +41,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 aboutSlot.appendChild(del);
             } else {
-                container.onclick = () => window.open(aboutFile.url, '_blank');
+                container.onclick = (e) => {
+                    // 드래그 중엔 클릭 무시
+                    if (isMoved) return;
+                    window.open(aboutFile.url, '_blank');
+                };
             }
             aboutSlot.appendChild(container);
         } else {
-            aboutSlot.innerHTML = `<div class="add-cta-main" onclick="document.getElementById('about-file-input').click()">+</div>`;
+            // + 아이콘 전용 클릭 버튼 생성
+            const addBtn = document.createElement('div');
+            addBtn.className = 'add-cta-main';
+            addBtn.innerHTML = '+';
+            addBtn.onclick = (e) => {
+                e.stopPropagation();
+                aboutInput.click();
+            };
+            aboutSlot.appendChild(addBtn);
         }
     }
 
@@ -77,11 +89,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     item.appendChild(del);
                 } else {
-                    box.onclick = () => window.open(proj.url, '_blank');
+                    // 드래그 충돌 방지 처리
+                    box.addEventListener('click', (e) => {
+                        if (isMoved) return;
+                        window.open(proj.url, '_blank');
+                    });
                 }
             } else {
-                box.innerHTML = `<div class="add-cta-main">+</div>`;
-                box.onclick = () => { currentProjectIndex = i; projectInput.click(); };
+                // + 아이콘 클릭 시에만 프로젝트 추가 발동 (범위 축소)
+                const addBtn = document.createElement('div');
+                addBtn.className = 'add-cta-main';
+                addBtn.innerHTML = '+';
+                addBtn.style.width = '100px'; // 클릭 범위 제한
+                addBtn.style.height = '100px';
+                addBtn.style.borderRadius = '50%';
+                addBtn.style.display = 'flex';
+                addBtn.style.justifyContent = 'center';
+                addBtn.style.alignItems = 'center';
+
+                addBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    currentProjectIndex = i;
+                    projectInput.click();
+                };
+                
+                box.style.display = 'flex';
+                box.style.justifyContent = 'center';
+                box.style.alignItems = 'center';
+                box.appendChild(addBtn);
             }
             
             item.appendChild(box);
@@ -89,37 +124,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 마우스 드래그 스크롤 기능 ---
+    // --- 마우스 드래그 스크롤 기능 (자연스러운 필터 추가) ---
     let isDown = false;
     let startX;
     let scrollLeft;
+    let isMoved = false; // 드래그 여부 확인 플래그
 
     projectContainer.addEventListener('mousedown', (e) => {
-        if (isEditMode) return; // 편집 모드에선 드래그 방지
         isDown = true;
+        isMoved = false;
         projectContainer.classList.add('active');
         startX = e.pageX - projectContainer.offsetLeft;
         scrollLeft = projectContainer.scrollLeft;
-        // Smooth 스크롤 일시 정지 (드래그 반응성을 위해)
         projectContainer.style.scrollBehavior = 'auto';
     });
 
     projectContainer.addEventListener('mouseleave', () => {
         isDown = false;
-        projectContainer.style.scrollBehavior = 'smooth';
     });
 
-    projectContainer.addEventListener('mouseup', () => {
+    projectContainer.addEventListener('mouseup', (e) => {
         isDown = false;
         projectContainer.style.scrollBehavior = 'smooth';
+        // 클릭 이벤트를 위해 약간의 지연 후 플래그 해제 (선택 사항)
+        setTimeout(() => {
+            // 마우스 업 시점에 드래그 상태를 마무리함
+        }, 10);
     });
 
     projectContainer.addEventListener('mousemove', (e) => {
         if (!isDown) return;
-        e.preventDefault();
         const x = e.pageX - projectContainer.offsetLeft;
-        const walk = (x - startX) * 2; // 스크롤 속도 조절
-        projectContainer.scrollLeft = scrollLeft - walk;
+        const dist = Math.abs(x - startX);
+        
+        // 미세한 움직임이 아닌 일정 거리 이상 움직이면 '드래그'로 간주
+        if (dist > 5) {
+            isMoved = true;
+            e.preventDefault();
+            const walk = (x - startX) * 2;
+            projectContainer.scrollLeft = scrollLeft - walk;
+        }
     });
 
     // --- 이벤트 리스너 ---
