@@ -210,7 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 4. 기타 연동 (자동 로그인 제거 로직 포함) ---
+    // --- 4. 기타 연동 (사용자 3원칙 고정) ---
+    // 1번 원칙: 처음 들어오면 무조건 로그아웃 상태에서 시작 (세션 복구 로직 삭제됨)
+    isLoggedIn = false;
+    updateAuthUI(null);
+    renderAll();
+    
+    console.log('Final Security Lockdown: Manual login required for every session.');
     function saveToLocal() {
         localStorage.setItem('portfolio_projects', JSON.stringify(projects));
         localStorage.setItem('about_file', JSON.stringify(aboutFile));
