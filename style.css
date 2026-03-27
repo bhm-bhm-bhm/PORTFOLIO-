@@ -410,3 +410,8 @@ body.logged-in .reset-link {
     opacity: 0.6;
 }
 
+
+/* 비로그인 시 전체 포트폴리오 내용 완벽히 숨김 (빈 페이지) */
+body:not(.logged-in) .content-container {
+    display: none !important;
+}
