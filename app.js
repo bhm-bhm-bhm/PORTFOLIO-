@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             container.style.height = '100%';
             
             if (aboutFile.type === 'pdf') {
-                container.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p class="pdf-name">${aboutFile.name}</p></div>`;
+                container.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p class="pdf-name" style="font-size: 1.5rem; margin-top: 10px;">${aboutFile.name}</p></div>`;
             } else {
                 container.innerHTML = `<img src="${aboutFile.url}" class="thumbnail-img">`;
             }
@@ -35,7 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const del = document.createElement('button');
                 del.className = 'delete-btn';
                 del.innerHTML = '&times;';
-                del.onclick = () => { aboutFile = null; localStorage.removeItem('about_file'); renderAbout(); };
+                del.onclick = (e) => { 
+                    e.stopPropagation(); 
+                    if(confirm('소개 파일을 삭제하시겠습니까?')) {
+                        aboutFile = null; localStorage.removeItem('about_file'); renderAbout(); 
+                    }
+                };
                 aboutSlot.appendChild(del);
             } else {
                 container.onclick = () => window.open(aboutFile.url, '_blank');
@@ -56,9 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
             box.className = 'square-box glass-card';
             
             if (proj) {
-                box.innerHTML = proj.type === 'pdf' ? 
-                    `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p class="pdf-name">${proj.name}</p></div>` : 
-                    `<img src="${proj.url}" class="thumbnail-img">`;
+                if (proj.type === 'pdf') {
+                    box.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual" style="width: 80px; height: 110px; font-size: 1.5rem;">PDF</div><p class="pdf-name" style="font-size: 1.2rem;">${proj.name}</p></div>`;
+                } else {
+                    box.innerHTML = `<img src="${proj.url}" class="thumbnail-img">`;
+                }
                 
                 if (isEditMode) {
                     const del = document.createElement('button');
@@ -66,7 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     del.innerHTML = '&times;';
                     del.onclick = (e) => { 
                         e.stopPropagation(); 
-                        projects[i] = null; saveProjects(); renderProjects(); 
+                        if(confirm(`프로젝트 ${i+1}을(를) 삭제하시겠습니까?`)) {
+                            projects[i] = null; saveProjects(); renderProjects(); 
+                        }
                     };
                     item.appendChild(del);
                 } else {
@@ -82,14 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 슬라이더 네비게이션 ---
+    // --- 슬라이더 네비게이션 (1개씩 스크롤) ---
     if (prevBtn && nextBtn) {
         prevBtn.onclick = () => {
-            const scrollWidth = projectContainer.clientWidth / 2;
+            // 박스 크기에 맞춰 1개씩 넘김
+            const scrollWidth = projectContainer.clientWidth;
             projectContainer.scrollBy({ left: -scrollWidth, behavior: 'smooth' });
         };
         nextBtn.onclick = () => {
-            const scrollWidth = projectContainer.clientWidth / 2;
+            const scrollWidth = projectContainer.clientWidth;
             projectContainer.scrollBy({ left: scrollWidth, behavior: 'smooth' });
         };
     }
