@@ -200,6 +200,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     projectContainer.addEventListener('scroll', updateSliderFocus);
 
+    // 화살표 네비게이션
+    const nextBtn = document.getElementById('next-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            projectContainer.scrollLeft += 650; // 아이템 너비(600) + 간격(50)
+        };
+    }
+    if (prevBtn) {
+        prevBtn.onclick = () => {
+            projectContainer.scrollLeft -= 650;
+        };
+    }
+
     let isDown = false, startX, scrollLeft, isMoved = false;
     projectContainer.addEventListener('mousedown', (e) => {
         isDown = true; isMoved = false;
