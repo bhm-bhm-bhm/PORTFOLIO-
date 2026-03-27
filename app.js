@@ -26,15 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('Kakao SDK Initialization Skipped:', e);
     }
 
-    // 2. 카카오 로그인/로그아웃 함수 (안전 모드)
+    // 2. 카카오 로그인/로그아웃 함수 (안전 모드 - 자동 재시도)
     window.loginWithKakao = function() {
-        if (!window.Kakao || !Kakao.Auth) {
-            alert('카카오 SDK 로딩 중입니다. 잠시만 기다려주세요.');
+        console.log('Login attempt started...');
+        if (!window.Kakao || !Kakao.Auth || !Kakao.isInitialized()) {
+            console.warn('Kakao SDK not ready yet. Retrying in 1s...');
+            initKakao(); // 재초기화 시도
+            setTimeout(window.loginWithKakao, 1000); // 1초 뒤 자동 재시도
             return;
         }
         Kakao.Auth.login({
             success: fetchUserInfo,
-            fail: (err) => { console.error(err); alert('로그인 실패'); }
+            fail: (err) => { console.error(err); }
         });
     };
 
