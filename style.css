@@ -311,93 +311,99 @@ body.logged-in .reset-link {
     border-color: var(--kakao-yellow);
 }
 
-/* [고급화] 소프트 라운드 프로필 CTA */
+/* [디자인 개편] 상단 프로필 바 및 로그아웃 메뉴 스타일 (레퍼런스 기반) */
 .profile-dropdown-container {
     position: absolute;
     right: 4rem;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.user-profile {
+.user-profile-bar {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    padding: 0.6rem 1.4rem;
-    border-radius: 18px; /* 소프트 라운드 적용 */
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    gap: 15px;
+}
+
+.avatar-img-round {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #d9d9d9;
+    object-fit: cover;
+}
+
+.nickname-text-simple {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.toggle-triangle {
+    color: #d9d9d9;
     cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 
-                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    margin-top: 8px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1002;
+    padding: 5px 15px; /* 부드러운 클릭감을 위한 여백 */
 }
 
-.user-profile:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: var(--kakao-yellow);
-    transform: translateY(-2px);
-    box-shadow: 0 15px 40px rgba(254, 229, 0, 0.15);
+.toggle-triangle:hover {
+    color: #fff;
 }
 
-.avatar-img { 
-    width: 28px; height: 28px; 
-    border-radius: 12px; /* 아바타도 부드러운 라운드 */
-    border: 1px solid rgba(255,255,255,0.2);
+.toggle-triangle.active {
+    transform: rotate(180deg);
 }
 
-.nickname-text { 
-    font-size: 0.85rem; 
-    font-weight: 600; 
-    color: var(--text-primary);
-    letter-spacing: 0.5px;
-}
-
-/* 슬라이드형 사이드 메뉴 드롭다운 */
-.dropdown-menu {
+.dropdown-light-box {
     position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
-    width: 160px;
-    padding: 1.2rem;
-    background: rgba(20, 20, 20, 0.8);
-    backdrop-filter: blur(30px);
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    top: calc(100% - 2px); /* 삼각형 바로 아래 플랫하게 붙기 */
+    width: 170px;
+    background-color: #d9d9d9;
+    border-radius: 0 0 15px 15px;
     display: none;
     flex-direction: column;
     align-items: center;
+    padding: 1.5rem 0;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    transform-origin: top center;
+    animation: unfold 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     z-index: 1001;
-    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dropdown-menu.show { display: flex; }
-
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.dropdown-light-box.show {
+    display: flex; /* 펼치기 */
 }
 
-.logout-link.underline {
+@keyframes unfold {
+    from { opacity: 0; transform: scaleY(0); }
+    to { opacity: 1; transform: scaleY(1); }
+}
+
+.logout-link-dark {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #000;
     background: none;
     border: none;
-    color: var(--text-primary);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-decoration: none;
-    border-bottom: 2px solid var(--kakao-yellow);
+    border-bottom: 2px solid #fff; /* 흰색 밑줄 */
     padding-bottom: 2px;
     cursor: pointer;
-    transition: var(--transition);
+    transition: opacity 0.3s;
+    font-family: 'Noto Sans KR', sans-serif;
+    letter-spacing: 2px;
 }
 
-.logout-link.underline:hover {
-    color: var(--kakao-yellow);
-    opacity: 1;
+.logout-link-dark:hover {
+    opacity: 0.6;
 }
 

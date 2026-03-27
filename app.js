@@ -102,18 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // 프로필 메뉴 토글 (사이드 메뉴 스타일)
+    // 프로필 메뉴 토글 (삼각형 클릭)
     window.toggleProfileMenu = function() {
         const menu = document.getElementById('profile-side-menu');
+        const triangle = document.getElementById('profile-triangle-btn');
         if (menu) menu.classList.toggle('show');
+        if (triangle) triangle.classList.toggle('active');
     };
 
     // 메뉴 바깥 클릭 시 닫기
     document.addEventListener('click', (e) => {
         const container = document.querySelector('.profile-dropdown-container');
         const menu = document.getElementById('profile-side-menu');
+        const triangle = document.getElementById('profile-triangle-btn');
         if (container && !container.contains(e.target)) {
             if (menu) menu.classList.remove('show');
+            if (triangle) triangle.classList.remove('active');
         }
     });
 

@@ -27,13 +27,18 @@
             </div>
             <div id="logged-in-view" style="display: none;">
                 <div class="profile-dropdown-container">
-                    <div id="user-profile-trigger" class="user-profile" onclick="toggleProfileMenu()">
-                        <img id="user-avatar" src="" alt="P" class="avatar-img">
-                        <span id="user-nickname" class="nickname-text"></span>
+                    <!-- 프로필 (전시용) -->
+                    <div class="user-profile-bar">
+                        <img id="user-avatar" src="" alt="P" class="avatar-img-round">
+                        <span id="user-nickname" class="nickname-text-simple"></span>
                     </div>
-                    <!-- 클릭 시 나타나는 사이드 메뉴 스타일 드롭다운 -->
-                    <div id="profile-side-menu" class="dropdown-menu glass-card">
-                        <button class="logout-link underline" onclick="logoutWithKakao()">LOGOUT</button>
+                    <!-- 클릭 가능한 드롭다운 삼각형 -->
+                    <div id="profile-triangle-btn" class="toggle-triangle" onclick="toggleProfileMenu()">
+                        <svg width="24" height="12" viewBox="0 0 18 10" fill="currentColor"><path d="M0 0l9 10 9-10z"/></svg>
+                    </div>
+                    <!-- 접히고 펼쳐지는 라이트 그레이 로그아웃 메뉴 -->
+                    <div id="profile-side-menu" class="dropdown-light-box">
+                        <button class="logout-link-dark" onclick="logoutWithKakao()">로그아웃</button>
                     </div>
                 </div>
             </div>
