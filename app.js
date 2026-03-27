@@ -140,8 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAbout() {
         aboutSlot.innerHTML = '';
-        if (aboutFile) {
-            // [데이터가 있을 때] + 버튼을 숨기고 내용만 보여줌
+        // 로그인 상태일 때만 실제 데이터(PDF/이미지) 노출
+        if (aboutFile && isLoggedIn) {
             const container = document.createElement('div');
             container.className = 'thumbnail-wrapper';
             container.style.height = '100%';
@@ -151,8 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.innerHTML = `<img src="${aboutFile.url}" class="thumbnail-img">`;
             }
 
-            // [편집 모드일 때만] 삭제 버튼 노출
-            if (isEditMode && isLoggedIn) {
+            if (isEditMode) {
                 const del = document.createElement('button');
                 del.className = 'delete-btn';
                 del.innerHTML = '&times;';
@@ -187,16 +186,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const box = document.createElement('div');
             box.className = 'square-box glass-card';
             
-            if (proj) {
-                // [데이터가 있을 때] 내용만 노출
+            // 로그인 상태일 때만 실제 데이터(PDF/이미지) 노출
+            if (proj && isLoggedIn) {
                 if (proj.type === 'pdf') {
                     box.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual" style="width: 80px; height: 110px;">PDF</div><p class="pdf-name">${proj.name}</p></div>`;
                 } else {
                     box.innerHTML = `<img src="${proj.url}" class="thumbnail-img">`;
                 }
                 
-                // [편집 모드일 때만] 삭제 버튼 노출
-                if (isEditMode && isLoggedIn) {
+                if (isEditMode) {
                     const del = document.createElement('button');
                     del.className = 'delete-btn';
                     del.innerHTML = '&times;';
