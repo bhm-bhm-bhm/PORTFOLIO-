@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEBPORTPOILO | HORIZONTAL</title>
+    <title>WEBPORTPOILO | DRAG & GLASS</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,19 +38,18 @@
             </div>
         </section>
 
-        <!-- 옆으로 넘기는 프로젝트 슬라이더 -->
+        <!-- 옆으로 넘기는 프로젝트 슬라이더 (드래그 지원) -->
         <section class="projects-slider-section">
-            <div class="slider-header">
+            <div class="slider-title">
                 <div class="side-label">프로젝트</div>
-                <div class="slider-controls">
-                    <button class="slider-nav-btn" id="prev-btn" title="이전">&larr;</button>
-                    <button class="slider-nav-btn" id="next-btn" title="다음">&rarr;</button>
-                </div>
             </div>
             <div class="slider-wrapper">
                 <div class="projects-horizontal-track" id="projects-container">
                     <!-- JS가 슬라이드 아이템을 생성합니다 -->
                 </div>
+            </div>
+            <div style="text-align: center; margin-top: 1rem; opacity: 0.3; font-size: 0.7rem; letter-spacing: 2px;">
+                DRAG TO EXPLORE
             </div>
         </section>
 

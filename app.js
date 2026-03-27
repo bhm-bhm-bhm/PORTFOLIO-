@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectContainer = document.getElementById('projects-container');
     const projectInput = document.getElementById('direct-project-file-input');
     const editBtn = document.getElementById('edit-mode-toggle');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
 
     let isEditMode = false;
     let currentProjectIndex = null;
@@ -23,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aboutFile) {
             const container = document.createElement('div');
             container.className = 'thumbnail-wrapper';
-            container.style.height = '100%';
+            container.style.height = '1000%'; // Full height container
             
             if (aboutFile.type === 'pdf') {
                 container.innerHTML = `<div class="pdf-thumbnail"><div class="pdf-icon-visual">PDF</div><p class="pdf-name" style="font-size: 1.5rem; margin-top: 10px;">${aboutFile.name}</p></div>`;
@@ -91,18 +89,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 슬라이더 네비게이션 (1개씩 스크롤) ---
-    if (prevBtn && nextBtn) {
-        prevBtn.onclick = () => {
-            // 박스 크기에 맞춰 1개씩 넘김
-            const scrollWidth = projectContainer.clientWidth;
-            projectContainer.scrollBy({ left: -scrollWidth, behavior: 'smooth' });
-        };
-        nextBtn.onclick = () => {
-            const scrollWidth = projectContainer.clientWidth;
-            projectContainer.scrollBy({ left: scrollWidth, behavior: 'smooth' });
-        };
-    }
+    // --- 마우스 드래그 스크롤 기능 ---
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    projectContainer.addEventListener('mousedown', (e) => {
+        if (isEditMode) return; // 편집 모드에선 드래그 방지
+        isDown = true;
+        projectContainer.classList.add('active');
+        startX = e.pageX - projectContainer.offsetLeft;
+        scrollLeft = projectContainer.scrollLeft;
+        // Smooth 스크롤 일시 정지 (드래그 반응성을 위해)
+        projectContainer.style.scrollBehavior = 'auto';
+    });
+
+    projectContainer.addEventListener('mouseleave', () => {
+        isDown = false;
+        projectContainer.style.scrollBehavior = 'smooth';
+    });
+
+    projectContainer.addEventListener('mouseup', () => {
+        isDown = false;
+        projectContainer.style.scrollBehavior = 'smooth';
+    });
+
+    projectContainer.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - projectContainer.offsetLeft;
+        const walk = (x - startX) * 2; // 스크롤 속도 조절
+        projectContainer.scrollLeft = scrollLeft - walk;
+    });
 
     // --- 이벤트 리스너 ---
     editBtn.onclick = () => {
