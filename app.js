@@ -2,16 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectsContainer = document.getElementById('projects-container');
     const aboutFileInput = document.getElementById('about-file-input');
     const directProjectFileInput = document.getElementById('direct-project-file-input');
-    const aboutContent = document.getElementById('about-content');
+    const aboutSlotContainer = document.getElementById('about-slot-container');
+    const aboutDisplayArea = document.getElementById('about-display-area');
     const editModeToggle = document.getElementById('edit-mode-toggle');
-    const aboutUploadBtn = document.getElementById('about-upload-btn');
     
     let currentSlotIndex = null;
     let isEditMode = false;
 
     // Load state from localStorage
     let projects = JSON.parse(localStorage.getItem('portfolio_projects')) || new Array(6).fill(null);
-    let aboutPdf = localStorage.getItem('about_pdf') || null;
+    let aboutFile = JSON.parse(localStorage.getItem('about_file')) || null;
 
     // Initial render
     renderProjects();
@@ -22,42 +22,39 @@ document.addEventListener('DOMContentLoaded', () => {
         isEditMode = !isEditMode;
         document.body.classList.toggle('body-editing', isEditMode);
         editModeToggle.classList.toggle('active', isEditMode);
-        
-        // Hide/Show upload button for about based on state or keep it for empty
         renderAbout();
         renderProjects();
     };
 
     // --- About Me Logic ---
     function renderAbout() {
-        if (aboutPdf) {
-            aboutContent.innerHTML = `
-                <div class="is-editing-indicator">EDIT MODE ACTIVE</div>
-                <div class="uploaded-status glass-card" onclick="${!isEditMode ? `window.open('${aboutPdf}', '_blank')` : ''}">
-                    <!-- PDF Visual (Styled via CSS) -->
-                </div>
-                <div class="about-info-text">
-                    <p class="success-text">나의 소개 PDF</p>
-                    <button class="view-btn" onclick="window.open('${aboutPdf}', '_blank')">열기</button>
-                    ${isEditMode ? `<button class="remove-btn" onclick="removeAboutPdf()">삭제</button>` : ''}
-                </div>
-            `;
-            aboutUploadBtn.style.display = isEditMode ? 'block' : 'none';
-            aboutUploadBtn.textContent = '소개 PDF 교체';
+        aboutDisplayArea.innerHTML = '';
+        
+        if (aboutFile) {
+            if (aboutFile.type.includes('pdf')) {
+                aboutDisplayArea.innerHTML = `
+                    <div class="pdf-thumbnail" style="height: 100%;">
+                        <div class="pdf-icon-visual">PDF</div>
+                        <div class="pdf-name">${aboutFile.name || '나의 소개 PDF'}</div>
+                    </div>
+                `;
+            } else {
+                aboutDisplayArea.innerHTML = `<img src="${aboutFile.url}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`;
+            }
+            
+            if (!isEditMode) {
+                aboutSlotContainer.onclick = () => window.open(aboutFile.url, '_blank');
+                aboutSlotContainer.classList.remove('add-project-cta');
+            } else {
+                aboutSlotContainer.onclick = () => aboutFileInput.click();
+                aboutSlotContainer.classList.add('add-project-cta');
+            }
         } else {
-            aboutContent.innerHTML = `<p class="placeholder-text">이곳에 소개 내용을 입력하거나 PDF 파일을 업로드하세요.</p>`;
-            aboutUploadBtn.style.display = 'block';
-            aboutUploadBtn.textContent = '소개 PDF 업로드';
+            aboutDisplayArea.innerHTML = '<span class="add-icon">+</span><p class="placeholder-text" style="color: rgba(255,255,255,0.2); margin-top: 10px;">나의 소개 추가 (PDF/이미지)</p>';
+            aboutSlotContainer.classList.add('add-project-cta');
+            aboutSlotContainer.onclick = () => aboutFileInput.click();
         }
     }
-
-    window.removeAboutPdf = () => {
-        if(confirm('업로드된 소개 PDF를 삭제하시겠습니까?')) {
-            localStorage.removeItem('about_pdf');
-            aboutPdf = null;
-            renderAbout();
-        }
-    };
 
     aboutFileInput.onchange = (e) => {
         const file = e.target.files[0];
@@ -66,12 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
         reader.onload = (event) => {
             const base64 = event.target.result;
-            if (base64.length > 3 * 1024 * 1024) {
-                alert('파일 용량이 너무 큽니다. (최대 3MB)');
+            if (base64.length > 4 * 1024 * 1024) {
+                alert('파일 용량이 너무 큽니다. (최대 4MB)');
                 return;
             }
-            localStorage.setItem('about_pdf', base64);
-            aboutPdf = base64;
+            const fileData = { url: base64, type: file.type, name: file.name };
+            localStorage.setItem('about_file', JSON.stringify(fileData));
+            aboutFile = fileData;
             renderAbout();
         };
         reader.readAsDataURL(file);
@@ -92,16 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
             box.className = 'square-box glass-card';
             
             if (project) {
-                // Delete button for editing mode
-                const delBtn = document.createElement('button');
-                delBtn.className = 'delete-overlay-btn';
-                delBtn.innerHTML = '&times;';
-                delBtn.title = '프로젝트 삭제';
-                delBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    removeProject(index);
-                };
-                projectItem.appendChild(delBtn);
+                if (isEditMode) {
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'delete-overlay-btn';
+                    delBtn.innerHTML = '&times;';
+                    delBtn.title = '프로젝트 삭제';
+                    delBtn.onclick = (e) => { e.stopPropagation(); removeProject(index); };
+                    projectItem.appendChild(delBtn);
+                }
 
                 if (project.type === 'pdf') {
                     box.innerHTML = `
@@ -110,18 +106,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="pdf-name">${project.title}</div>
                         </div>
                     `;
-                } else if (project.type === 'image') {
+                } else {
                     box.innerHTML = `<img src="${project.url}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`;
                 }
                 
                 if (!isEditMode) {
                     box.onclick = () => window.open(project.url, '_blank');
+                    box.classList.remove('add-project-cta');
                 } else {
-                    box.title = "편집 모드에서는 삭제 버튼을 사용해 주세요.";
+                    box.onclick = () => { currentSlotIndex = index; directProjectFileInput.click(); };
+                    box.classList.add('add-project-cta');
                 }
 
             } else {
-                // Empty -> Direct File Picker
                 box.classList.add('add-project-cta');
                 box.innerHTML = '<span class="add-icon">+</span>';
                 box.onclick = () => {
@@ -151,15 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
         reader.onload = (event) => {
             const base64 = event.target.result;
-            if (base64.length > 3 * 1024 * 1024) {
-                alert('용량이 너무 큽니다. (3MB 이하 권장)');
+            if (base64.length > 4 * 1024 * 1024) {
+                alert('용량이 너무 큽니다. (4MB 이하 권장)');
                 return;
             }
-            
             const type = file.type.includes('pdf') ? 'pdf' : 'image';
             const title = file.name;
-
-            // Save automatically
             projects[currentSlotIndex] = { title, type, url: base64 };
             localStorage.setItem('portfolio_projects', JSON.stringify(projects));
             renderProjects();
@@ -170,12 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clear-storage');
     if (clearBtn) {
         clearBtn.onclick = () => {
-            if(confirm('모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+            if(confirm('모든 데이터를 초기화하시겠습니까?')) {
                 localStorage.clear();
                 projects = new Array(6).fill(null);
-                aboutPdf = null;
+                aboutFile = null;
                 renderProjects();
                 renderAbout();
+                location.reload();
             }
         };
     }
