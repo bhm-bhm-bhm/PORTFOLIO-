@@ -210,13 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 4. 기타 연동 (사용자 3원칙 고정) ---
-    // 1번 원칙: 처음 들어오면 무조건 로그아웃 상태에서 시작 (세션 복구 로직 삭제됨)
-    isLoggedIn = false;
-    updateAuthUI(null);
-    renderAll();
-    
-    console.log('Final Security Lockdown: Manual login required for every session.');
     function saveToLocal() {
         localStorage.setItem('portfolio_projects', JSON.stringify(projects));
         localStorage.setItem('about_file', JSON.stringify(aboutFile));
@@ -289,9 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (clearBtn) clearBtn.onclick = () => { if(confirm('영구 삭제하시겠습니까?')) { localStorage.clear(); location.reload(); } };
 
-    // 실행
+    // [최종 철저본] 기존의 모든 자동 로그인 방지 및 리셋
+    if (window.Kakao && Kakao.Auth) {
+        Kakao.Auth.setAccessToken(null); // 토큰 완전 제거로 자동 로그인 원천 차단
+    }
+
+    // 접속 시 무조건 비로그인 상태로 화면 렌더링 (편집, + 버튼 없음)
+    isLoggedIn = false;
+    updateAuthUI(null);
     renderAll();
-    setTimeout(() => {
-        if (window.Kakao && Kakao.Auth && Kakao.Auth.getAccessToken()) fetchUserInfo();
-    }, 1000);
 });
