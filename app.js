@@ -18,13 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAbout() {
         if (aboutPdf) {
             aboutContent.innerHTML = `
-                <div class="uploaded-status">
-                    <!-- PDF Icon via CSS -->
+                <p class="success-text">✅ 나의 소개가 업로드되었습니다.</p>
+                <div class="uploaded-status glass-card" onclick="window.open('${aboutPdf}', '_blank')">
+                    <!-- PDF Visual (Styled via CSS) -->
                 </div>
                 <div class="about-info-text">
-                    <p class="success-text">나의 소개 PDF</p>
-                    <button class="glass-btn" style="padding: 0.5rem 1.5rem; margin-top: 10px;" onclick="window.open('${aboutPdf}', '_blank')">열기</button>
-                    <button class="reset-link" style="margin-left: 10px;" onclick="removeAboutPdf()">삭제</button>
+                    <button class="view-btn" onclick="window.open('${aboutPdf}', '_blank')">열기</button>
+                    <button class="remove-btn" onclick="removeAboutPdf()">삭제</button>
                 </div>
             `;
         } else {
@@ -33,9 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.removeAboutPdf = () => {
-        localStorage.removeItem('about_pdf');
-        aboutPdf = null;
-        renderAbout();
+        if(confirm('업로드된 소개 PDF를 삭제하시겠습니까?')) {
+            localStorage.removeItem('about_pdf');
+            aboutPdf = null;
+            renderAbout();
+        }
     };
 
     aboutFileInput.onchange = (e) => {
@@ -46,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             const base64 = event.target.result;
             if (base64.length > 3 * 1024 * 1024) {
-                alert('파일 용량이 너무 큽니다. (최대 3MB 권장)');
+                alert('파일 용량이 너무 큽니다. (최대 3MB)');
                 return;
             }
             localStorage.setItem('about_pdf', base64);
@@ -65,17 +67,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const label = document.createElement('div');
             label.className = 'project-label';
-            label.textContent = `PROJECT ${String(index + 1).padStart(2, '0')}`;
+            label.textContent = `PROJECT ${index + 1}`;
             
             const box = document.createElement('div');
             box.className = 'square-box glass-card';
             
             if (project) {
-                // If PDF, show glass thumbnail
+                // If PDF, show visual document card
                 if (project.type === 'pdf') {
                     box.innerHTML = `
                         <div class="pdf-thumbnail">
-                            <div class="pdf-icon">PDF DOCUMENT</div>
+                            <div class="pdf-icon-visual">PDF</div>
                             <div class="pdf-name">${project.title}</div>
                         </div>
                     `;
