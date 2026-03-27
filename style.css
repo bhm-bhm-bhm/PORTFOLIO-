@@ -296,3 +296,81 @@ body {
     color: #000;
 }
 
+
+/* Auth UI Styles */
+.auth-ui-container {
+    position: absolute;
+    right: 3rem;
+    top: 6rem;
+    z-index: 1000;
+}
+
+.login-btn {
+    padding: 0.8rem 1.6rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border-radius: 50px !important;
+}
+
+.login-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+}
+
+.kakao-symbol {
+    width: 22px;
+    height: 22px;
+    background: #FEE500;
+    color: #3C1E1E;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    font-size: 0.7rem;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
+}
+
+.avatar-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-color);
+}
+
+.nickname-text {
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.logout-link {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-decoration: underline;
+    transition: var(--transition);
+}
+
+.logout-link:hover {
+    color: var(--danger-color);
+}

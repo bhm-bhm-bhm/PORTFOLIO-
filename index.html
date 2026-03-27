@@ -4,18 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEBPORTPOILO | DRAG & GLASS</title>
+    <title>WEBPORTPOILO | KAKAO LOGIN</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap"
         rel="stylesheet">
+    <!-- 카카오 SDK 추가 -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"
+        integrity="sha384-lLe9Y9uo0XkXat9G9N0F4RToBfE9h+8K5V1aM2W3YshnL1i5d9P7J5X7YJ3g7qWj"
+        crossorigin="anonymous"></script>
 </head>
 
 <body class="glass-theme dark-mode">
     <header class="site-header">
         <h1 class="centered-logo">WEBPORTPOILO</h1>
+        
+        <!-- 로그인 제어 컨테이너 -->
+        <div class="auth-ui-container">
+            <div id="logged-out-view">
+                <button class="login-btn glass-card" onclick="loginWithKakao()">
+                    <span class="kakao-symbol">K</span> LOGIN
+                </button>
+            </div>
+            <div id="logged-in-view" style="display: none;">
+                <div class="user-profile">
+                    <img id="user-avatar" src="" alt="P" class="avatar-img">
+                    <span id="user-nickname" class="nickname-text"></span>
+                    <button class="logout-link" onclick="logoutWithKakao()">LOGOUT</button>
+                </div>
+            </div>
+        </div>
     </header>
 
     <main class="content-container">
@@ -23,8 +43,13 @@
         <section class="intro-section" id="about">
             <div class="section-header-flex">
                 <div class="side-label">나의 소개</div>
-                <button class="mini-edit-btn edit-mode-trigger" title="소개 편집">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <!-- 로그인 시에만 보이는 편집 버튼 -->
+                <button class="mini-edit-btn edit-mode-trigger auth-only-ui" title="소개 편집" style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
                 </button>
             </div>
             <div class="large-box glass-card" id="about-slot-container">
@@ -39,8 +64,13 @@
             <div class="slider-header">
                 <div class="section-header-flex">
                     <div class="side-label">프로젝트</div>
-                    <button class="mini-edit-btn edit-mode-trigger" title="프로젝트 편집">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    <!-- 로그인 시에만 보이는 편집 버튼 -->
+                    <button class="mini-edit-btn edit-mode-trigger auth-only-ui" title="프로젝트 편집" style="display: none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -59,7 +89,7 @@
 
     <footer class="footer">
         <p>&copy; 2026 WEBPORTPOILO</p>
-        <button id="clear-storage" class="reset-link">데이터 초기화</button>
+        <button id="clear-storage" class="reset-link auth-only-ui" style="display: none;">데이터 초기화</button>
     </footer>
 
     <script src="app.js"></script>
