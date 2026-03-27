@@ -1,75 +1,87 @@
+// app.js - 정밀 복구 버전 (JS Crash 방지 및 모든 기능 상시 활성화)
+
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. 필수 요소 확인 및 초기화
     const aboutSlot = document.getElementById('about-display-area');
     const aboutInput = document.getElementById('about-file-input');
     const projectContainer = document.getElementById('projects-container');
     const projectInput = document.getElementById('direct-project-file-input');
     const editModeTriggers = document.querySelectorAll('.edit-mode-trigger');
+    const clearBtn = document.getElementById('clear-storage');
 
     let isEditMode = false;
-    let isLoggedIn = false; 
+    let isLoggedIn = false;
     let currentProjectIndex = null;
     let projects = JSON.parse(localStorage.getItem('portfolio_projects')) || new Array(6).fill(null);
     let aboutFile = JSON.parse(localStorage.getItem('about_file')) || null;
 
-    // --- 카카오 SDK 초기화 (외부 호출용) ---
+    // 1. 카카오 SDK 안전 초기화
     const KAKAO_KEY = '84bc6e0cb6d58fc4fca663bb14964778';
-    if (window.Kakao && !Kakao.isInitialized()) {
-        Kakao.init(KAKAO_KEY);
+    try {
+        if (window.Kakao && !Kakao.isInitialized()) {
+            Kakao.init(KAKAO_KEY);
+            console.log('Kakao SDK Initialized');
+        }
+    } catch (e) {
+        console.warn('Kakao SDK Initialization Skipped:', e);
     }
 
+    // 2. 카카오 로그인/로그아웃 함수 (안전 모드)
     window.loginWithKakao = function() {
+        if (!window.Kakao || !Kakao.Auth) {
+            alert('카카오 SDK 로딩 중입니다. 잠시만 기다려주세요.');
+            return;
+        }
         Kakao.Auth.login({
-            success: function(authObj) {
-                fetchUserInfo();
-            },
-            fail: function(err) {
-                console.error(err);
-                alert('로그인에 실패했습니다.');
-            }
+            success: fetchUserInfo,
+            fail: (err) => { console.error(err); alert('로그인 실패'); }
         });
     };
 
     window.logoutWithKakao = function() {
-        if (!Kakao.Auth.getAccessToken()) return;
-        Kakao.Auth.logout(() => {
-            isLoggedIn = false;
-            updateAuthUI(null);
-            renderAll();
-        });
+        try {
+            if (Kakao.Auth.getAccessToken()) {
+                Kakao.Auth.logout(() => {
+                    isLoggedIn = false;
+                    updateAuthUI(null);
+                    renderAll();
+                });
+            }
+        } catch (e) { console.error(e); }
     };
 
     function fetchUserInfo() {
-        Kakao.API.request({
-            url: '/v2/user/me',
-            success: function(res) {
-                isLoggedIn = true;
-                updateAuthUI(res);
-                renderAll();
-            },
-            fail: function(error) {
-                console.error(error);
-            }
-        });
+        try {
+            Kakao.API.request({
+                url: '/v2/user/me',
+                success: (res) => {
+                    isLoggedIn = true;
+                    updateAuthUI(res);
+                    renderAll();
+                },
+                fail: (err) => console.error(err)
+            });
+        } catch (e) { console.error(e); }
     }
 
     function updateAuthUI(user) {
         const loggedOutView = document.getElementById('logged-out-view');
         const loggedInView = document.getElementById('logged-in-view');
-        if (user) {
+        if (user && loggedOutView && loggedInView) {
             loggedOutView.style.display = 'none';
             loggedInView.style.display = 'flex';
             document.getElementById('user-nickname').innerText = user.properties.nickname;
             document.getElementById('user-avatar').src = user.properties.thumbnail_image || '';
-        } else {
+        } else if (loggedOutView && loggedInView) {
             loggedOutView.style.display = 'block';
             loggedInView.style.display = 'none';
         }
     }
 
-    // --- 렌더링 함수 (로그인 체크 해제 - 원래 기능 복구) ---
+    // 3. 렌더링 함수 (상시 노출)
     function renderAll() {
-        renderAbout();
-        renderProjects();
+        if (aboutSlot) renderAbout();
+        if (projectContainer) renderProjects();
         updateEditButtonStates();
     }
 
@@ -92,16 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 del.innerHTML = '&times;';
                 del.onclick = (e) => { 
                     e.stopPropagation(); 
-                    if(confirm('소개 파일을 삭제하시겠습니까?')) {
+                    if(confirm('파일을 삭제하시겠습니까?')) {
                         aboutFile = null; localStorage.removeItem('about_file'); renderAbout(); 
                     }
                 };
                 aboutSlot.appendChild(del);
             } else {
-                container.onclick = (e) => {
-                    if (isMoved) return;
-                    window.open(aboutFile.url, '_blank');
-                };
+                container.onclick = () => { if (!isMoved) window.open(aboutFile.url, '_blank'); };
             }
             aboutSlot.appendChild(container);
         } else {
@@ -134,13 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     del.innerHTML = '&times;';
                     del.onclick = (e) => { 
                         e.stopPropagation(); 
-                        if(confirm(`프로젝트 ${i+1}을 삭제하시겠습니까?`)) {
+                        if(confirm(`프로젝트 ${i+1} 삭제?`)) {
                             projects[i] = null; saveProjects(); renderProjects(); 
                         }
                     };
                     item.appendChild(del);
                 } else {
-                    box.onclick = () => { if (isMoved) return; window.open(proj.url, '_blank'); };
+                    box.onclick = () => { if (!isMoved) window.open(proj.url, '_blank'); };
                 }
             } else {
                 const addBtn = document.createElement('div');
@@ -171,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    // --- 드래그 로직 ---
+    // 4. 드래그 로직 (중복 클릭 방지)
     let isDown = false, startX, scrollLeft, isMoved = false;
     projectContainer.addEventListener('mousedown', (e) => {
         isDown = true; isMoved = false;
@@ -192,8 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    aboutInput.onchange = (e) => handleFileUpload(e.target.files[0], 'about');
-    projectInput.onchange = (e) => handleFileUpload(e.target.files[0], 'project');
+    // 5. 파일 핸들링
+    if (aboutInput) aboutInput.onchange = (e) => handleFileUpload(e.target.files[0], 'about');
+    if (projectInput) projectInput.onchange = (e) => handleFileUpload(e.target.files[0], 'project');
 
     function handleFileUpload(file, target) {
         if (!file) return;
@@ -209,12 +219,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveProjects() { localStorage.setItem('portfolio_projects', JSON.stringify(projects)); }
 
-    document.getElementById('clear-storage').onclick = () => {
-        if(confirm('모든 데이터를 초기화하시겠습니까?')) {
-            localStorage.clear(); location.reload();
-        }
-    };
+    if (clearBtn) {
+        clearBtn.onclick = () => { if(confirm('모든 데이터를 초기화?')) { localStorage.clear(); location.reload(); } };
+    }
 
-    if (Kakao.Auth.getAccessToken()) fetchUserInfo();
+    // 6. 안전 실행 (초기 렌더링 먼저 수행)
     renderAll();
+    
+    // 카카오 상태 체크는 나중에 따로 (충돌 방지)
+    setTimeout(() => {
+        try {
+            if (window.Kakao && Kakao.Auth && Kakao.Auth.getAccessToken()) {
+                fetchUserInfo();
+            }
+        } catch (e) {
+            console.log('Kakao status check failed (normal if not logged in)');
+        }
+    }, 1000);
 });
