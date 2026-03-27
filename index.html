@@ -24,9 +24,11 @@
         <!-- 로그인 제어 컨테이너 -->
         <div class="auth-ui-container">
             <div id="logged-out-view">
-                <button class="login-btn glass-card" onclick="loginWithKakao()">
-                    <span class="kakao-symbol">K</span> LOGIN
-                </button>
+                <!-- 카카오 공식 로그인 이미지로 교체 -->
+                <a id="kakao-login-btn" href="javascript:loginWithKakao()">
+                    <img src="https://k.kakaocdn.net/14/dn/btroDszwNrM/Ji7P1S3QCqBGP6HAb8NQA0/o.jpg" 
+                         width="180" alt="카카오 로그인 버튼" style="cursor: pointer; display: block; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3)); border-radius: 6px;" />
+                </a>
             </div>
             <div id="logged-in-view" style="display: none;">
                 <div class="user-profile">
