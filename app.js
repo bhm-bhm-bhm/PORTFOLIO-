@@ -1,11 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const projectsContainer = document.getElementById('projects-container');
-    const modal = document.getElementById('project-modal');
-    const closeModal = document.querySelector('.close-btn');
-    const addProjectForm = document.getElementById('add-project-form');
     const aboutFileInput = document.getElementById('about-file-input');
-    const projectFileInput = document.getElementById('project-file-input');
-    const projectUrlInput = document.getElementById('project-url');
+    const directProjectFileInput = document.getElementById('direct-project-file-input');
     const aboutContent = document.getElementById('about-content');
     
     let currentSlotIndex = null;
@@ -23,9 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aboutPdf) {
             aboutContent.innerHTML = `
                 <div class="uploaded-status">
-                    <p class="success-text">나의 소개 PDF가 업로드되었습니다.</p>
-                    <button class="view-btn" onclick="window.open('${aboutPdf}', '_blank')">PDF 열기</button>
-                    <button class="remove-btn" onclick="removeAboutPdf()">삭제</button>
+                    <!-- PDF Icon via CSS -->
+                </div>
+                <div class="about-info-text">
+                    <p class="success-text">나의 소개 PDF</p>
+                    <button class="glass-btn" style="padding: 0.5rem 1.5rem; margin-top: 10px;" onclick="window.open('${aboutPdf}', '_blank')">열기</button>
+                    <button class="reset-link" style="margin-left: 10px;" onclick="removeAboutPdf()">삭제</button>
                 </div>
             `;
         } else {
@@ -46,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
         reader.onload = (event) => {
             const base64 = event.target.result;
-            if (base64.length > 2 * 1024 * 1024) { // 2MB limit check
-                alert('파일 용량이 너무 큽니다. (최대 2MB 권장)');
+            if (base64.length > 3 * 1024 * 1024) {
+                alert('파일 용량이 너무 큽니다. (최대 3MB 권장)');
                 return;
             }
             localStorage.setItem('about_pdf', base64);
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     };
 
-    // --- Projects Logic ---
+    // --- Projects Logic (Direct Interaction) ---
     function renderProjects() {
         projectsContainer.innerHTML = '';
         projects.forEach((project, index) => {
@@ -66,18 +65,32 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const label = document.createElement('div');
             label.className = 'project-label';
-            label.textContent = `프로젝트 ${index + 1}`;
+            label.textContent = `PROJECT ${String(index + 1).padStart(2, '0')}`;
             
             const box = document.createElement('div');
-            box.className = 'square-box content-box';
+            box.className = 'square-box glass-card';
             
             if (project) {
-                box.innerHTML = `<h3>${project.title}</h3>`;
+                // If PDF, show glass thumbnail
+                if (project.type === 'pdf') {
+                    box.innerHTML = `
+                        <div class="pdf-thumbnail">
+                            <div class="pdf-icon">PDF DOCUMENT</div>
+                            <div class="pdf-name">${project.title}</div>
+                        </div>
+                    `;
+                } else if (project.type === 'image') {
+                    box.innerHTML = `<img src="${project.url}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`;
+                }
                 box.onclick = () => window.open(project.url, '_blank');
             } else {
+                // Empty -> Direct File Picker
                 box.classList.add('add-project-cta');
                 box.innerHTML = '<span class="add-icon">+</span>';
-                box.onclick = () => openModal(index);
+                box.onclick = () => {
+                    currentSlotIndex = index;
+                    directProjectFileInput.click();
+                };
             }
             
             projectItem.appendChild(label);
@@ -86,56 +99,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function openModal(index) {
-        currentSlotIndex = index;
-        modal.style.display = 'block';
-        addProjectForm.reset();
-        projectUrlInput.value = '';
-        document.getElementById('project-title').focus();
-    }
-
-    closeModal.onclick = () => modal.style.display = 'none';
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
-
-    projectFileInput.onchange = (e) => {
+    directProjectFileInput.onchange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = (event) => {
             const base64 = event.target.result;
-            if (base64.length > 2 * 1024 * 1024) {
-                alert('파일 용량이 너무 큽니다. (2MB 이하 권장)');
+            if (base64.length > 3 * 1024 * 1024) {
+                alert('용량이 너무 큽니다. (3MB 이하 권장)');
                 return;
             }
-            projectUrlInput.value = base64; // Temporarily show base64 in the input
-            projectUrlInput.placeholder = "파일이 선택되었습니다.";
+            
+            const type = file.type.includes('pdf') ? 'pdf' : 'image';
+            const title = file.name;
+
+            // Save automatically
+            projects[currentSlotIndex] = { title, type, url: base64 };
+            localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+            renderProjects();
         };
         reader.readAsDataURL(file);
-    };
-
-    addProjectForm.onsubmit = (e) => {
-        e.preventDefault();
-        const title = document.getElementById('project-title').value;
-        const type = document.querySelector('input[name="project-type"]:checked').value;
-        const url = projectUrlInput.value;
-        
-        projects[currentSlotIndex] = { title, type, url };
-        localStorage.setItem('portfolio_projects', JSON.stringify(projects));
-        modal.style.display = 'none';
-        renderProjects();
     };
 
     const clearBtn = document.getElementById('clear-storage');
     if (clearBtn) {
         clearBtn.onclick = () => {
-            if(confirm('모든 데이터가 초기화됩니다. 계속하시겠습니까?')) {
+            if(confirm('모든 데이터를 초기화하시겠습니까?')) {
                 localStorage.clear();
                 projects = new Array(6).fill(null);
                 aboutPdf = null;
                 renderProjects();
                 renderAbout();
-                modal.style.display = 'none';
             }
         };
     }
