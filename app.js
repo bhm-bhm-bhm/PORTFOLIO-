@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const aboutInput = document.getElementById('about-file-input');
     const projectContainer = document.getElementById('projects-container');
     const projectInput = document.getElementById('direct-project-file-input');
-    const editBtn = document.getElementById('edit-mode-toggle');
+    const editModeTriggers = document.querySelectorAll('.edit-mode-trigger');
 
     let isEditMode = false;
     let currentProjectIndex = null;
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         renderAbout();
         renderProjects();
+        updateEditButtonStates();
     }
 
     function renderAbout() {
@@ -42,21 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 aboutSlot.appendChild(del);
             } else {
                 container.onclick = (e) => {
-                    // 드래그 중엔 클릭 무시
                     if (isMoved) return;
                     window.open(aboutFile.url, '_blank');
                 };
             }
             aboutSlot.appendChild(container);
         } else {
-            // + 아이콘 전용 클릭 버튼 생성
             const addBtn = document.createElement('div');
             addBtn.className = 'add-cta-main';
             addBtn.innerHTML = '+';
-            addBtn.onclick = (e) => {
-                e.stopPropagation();
-                aboutInput.click();
-            };
+            addBtn.onclick = (e) => { e.stopPropagation(); aboutInput.click(); };
             aboutSlot.appendChild(addBtn);
         }
     }
@@ -89,18 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     item.appendChild(del);
                 } else {
-                    // 드래그 충돌 방지 처리
                     box.addEventListener('click', (e) => {
                         if (isMoved) return;
                         window.open(proj.url, '_blank');
                     });
                 }
             } else {
-                // + 아이콘 클릭 시에만 프로젝트 추가 발동 (범위 축소)
                 const addBtn = document.createElement('div');
                 addBtn.className = 'add-cta-main';
                 addBtn.innerHTML = '+';
-                addBtn.style.width = '100px'; // 클릭 범위 제한
+                addBtn.style.width = '100px'; 
                 addBtn.style.height = '100px';
                 addBtn.style.borderRadius = '50%';
                 addBtn.style.display = 'flex';
@@ -124,11 +118,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 마우스 드래그 스크롤 기능 (자연스러운 필터 추가) ---
+    // --- 편집 버튼 상태 동기화 ---
+    function updateEditButtonStates() {
+        editModeTriggers.forEach(btn => {
+            if (isEditMode) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+
+    // --- 편집 모드 토글 로직 추가 (멀티 버튼 대응) ---
+    editModeTriggers.forEach(trigger => {
+        trigger.onclick = () => {
+            isEditMode = !isEditMode;
+            document.body.classList.toggle('body-editing', isEditMode);
+            renderAll();
+        };
+    });
+
+    // --- 마우스 드래그 스크롤 기능 ---
     let isDown = false;
     let startX;
     let scrollLeft;
-    let isMoved = false; // 드래그 여부 확인 플래그
+    let isMoved = false;
 
     projectContainer.addEventListener('mousedown', (e) => {
         isDown = true;
@@ -139,25 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
         projectContainer.style.scrollBehavior = 'auto';
     });
 
-    projectContainer.addEventListener('mouseleave', () => {
-        isDown = false;
-    });
-
-    projectContainer.addEventListener('mouseup', (e) => {
+    projectContainer.addEventListener('mouseleave', () => { isDown = false; });
+    projectContainer.addEventListener('mouseup', () => {
         isDown = false;
         projectContainer.style.scrollBehavior = 'smooth';
-        // 클릭 이벤트를 위해 약간의 지연 후 플래그 해제 (선택 사항)
-        setTimeout(() => {
-            // 마우스 업 시점에 드래그 상태를 마무리함
-        }, 10);
     });
 
     projectContainer.addEventListener('mousemove', (e) => {
         if (!isDown) return;
         const x = e.pageX - projectContainer.offsetLeft;
         const dist = Math.abs(x - startX);
-        
-        // 미세한 움직임이 아닌 일정 거리 이상 움직이면 '드래그'로 간주
         if (dist > 5) {
             isMoved = true;
             e.preventDefault();
@@ -165,14 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
             projectContainer.scrollLeft = scrollLeft - walk;
         }
     });
-
-    // --- 이벤트 리스너 ---
-    editBtn.onclick = () => {
-        isEditMode = !isEditMode;
-        document.body.classList.toggle('body-editing', isEditMode);
-        editBtn.classList.toggle('active', isEditMode);
-        renderAll();
-    };
 
     aboutInput.onchange = (e) => handleFileUpload(e.target.files[0], 'about');
     projectInput.onchange = (e) => handleFileUpload(e.target.files[0], 'project');
