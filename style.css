@@ -276,3 +276,71 @@ body {
 .slider-nav-btn.next { right: 2vw; }
 
 .slider-nav-btn svg { width: 30px; height: 30px; stroke-width: 1.5; }
+
+/* 프로필 드롭다운 메뉴 스타일 */
+.profile-dropdown-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.user-profile:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    width: 150px;
+    padding: 1rem;
+    display: none; /* JS에서 토글 */
+    flex-direction: column;
+    align-items: center;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: slideDown 0.3s ease-out;
+    z-index: 1000;
+}
+
+.dropdown-menu.show {
+    display: flex;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.logout-link.underline {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent-color); /* 요청하신 밑줄 */
+    padding-bottom: 3px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.logout-link.underline:hover {
+    opacity: 0.7;
+    border-bottom-color: var(--kakao-yellow);
+}

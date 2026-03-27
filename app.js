@@ -70,21 +70,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const adminElements = document.querySelectorAll('.mini-edit-btn, .reset-link');
 
         if (user) {
-            loggedOutView.style.display = 'none';
-            loggedInView.style.display = 'flex';
+            if (loggedOutView) loggedOutView.style.display = 'none';
+            if (loggedInView) loggedInView.style.display = 'flex';
             document.getElementById('user-nickname').innerText = user.properties.nickname;
             document.getElementById('user-avatar').src = user.properties.thumbnail_image || '';
-            // 관리자 전용 버튼 노출
-            adminElements.forEach(el => el.style.display = 'flex');
+            
+            // 버그 수정: 로그인이 확인되는 즉시 모든 편집 버튼을 보이게 함
+            adminElements.forEach(el => {
+                el.style.display = 'flex';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+            });
         } else {
-            loggedOutView.style.display = 'block';
-            loggedInView.style.display = 'none';
-            // 관리자 전용 버튼 숨김
+            if (loggedOutView) loggedOutView.style.display = 'block';
+            if (loggedInView) loggedInView.style.display = 'none';
+            
             adminElements.forEach(el => el.style.display = 'none');
             isEditMode = false;
             document.body.classList.remove('body-editing');
         }
     }
+
+    // 프로필 메뉴 토글 (사이드 메뉴 스타일)
+    window.toggleProfileMenu = function() {
+        const menu = document.getElementById('profile-side-menu');
+        if (menu) menu.classList.toggle('show');
+    };
+
+    // 메뉴 바깥 클릭 시 닫기
+    document.addEventListener('click', (e) => {
+        const container = document.querySelector('.profile-dropdown-container');
+        const menu = document.getElementById('profile-side-menu');
+        if (container && !container.contains(e.target)) {
+            if (menu) menu.classList.remove('show');
+        }
+    });
 
     // --- 3. 렌더링 (보안 적용: 로그인 상태에서만 + 버튼 노출) ---
     function renderAll() {

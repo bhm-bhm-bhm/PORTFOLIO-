@@ -11,30 +11,30 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap"
         rel="stylesheet">
-    <!-- 카카오 SDK 추가 - 안정적인 1.x 버전으로 교체하여 호환성 해결 -->
+    <!-- 카카오 SDK 추가 - 안정적인 1.x 버전 -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/1.43.0/kakao.min.js"></script>
 </head>
 
 <body class="glass-theme dark-mode">
     <header class="site-header">
-        <div class="header-left">
-            <!-- 로고를 왼쪽으로 살짝 밀어 균형을 맞춤 -->
-        </div>
+        <div class="header-left"></div>
         <h1 class="centered-logo">WEBPORTPOILO</h1>
         
-        <!-- 로그인 제어 컨테이너 -->
+        <!-- 로그인 제어 컨테이너 (드롭다운 포함) -->
         <div class="auth-ui-container">
             <div id="logged-out-view">
-                <!-- 라운드 사각형 "카카오" 버튼 -->
-                <button class="kakao-simple-btn" onclick="loginWithKakao()">
-                    카카오
-                </button>
+                <button class="kakao-simple-btn" onclick="loginWithKakao()">카카오</button>
             </div>
             <div id="logged-in-view" style="display: none;">
-                <div class="user-profile">
-                    <img id="user-avatar" src="" alt="P" class="avatar-img">
-                    <span id="user-nickname" class="nickname-text"></span>
-                    <button class="logout-link" onclick="logoutWithKakao()">로그아웃</button>
+                <div class="profile-dropdown-container">
+                    <div id="user-profile-trigger" class="user-profile" onclick="toggleProfileMenu()">
+                        <img id="user-avatar" src="" alt="P" class="avatar-img">
+                        <span id="user-nickname" class="nickname-text"></span>
+                    </div>
+                    <!-- 클릭 시 나타나는 사이드 메뉴 스타일 드롭다운 -->
+                    <div id="profile-side-menu" class="dropdown-menu glass-card">
+                        <button class="logout-link underline" onclick="logoutWithKakao()">LOGOUT</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,8 +45,8 @@
         <section class="intro-section" id="about">
             <div class="section-header-flex">
                 <div class="side-label">나의 소개</div>
-                <!-- 편집 버튼 상시 노출 -->
-                <button class="mini-edit-btn edit-mode-trigger" title="편집">
+                <!-- 편집 버튼 (로그인 시 노출) -->
+                <button class="mini-edit-btn edit-mode-trigger" title="편집" style="display: none;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -61,13 +61,13 @@
             </div>
         </section>
 
-        <!-- 옆으로 넘기는 프로젝트 슬라이더 (드래그 지원) -->
+        <!-- 옆으로 넘기는 프로젝트 슬라이더 -->
         <section class="projects-slider-section">
             <div class="slider-header">
                 <div class="section-header-flex">
                     <div class="side-label">프로젝트</div>
-                    <!-- 로그인 시에만 보이는 편집 버튼 -->
-                    <button class="mini-edit-btn edit-mode-trigger auth-only-ui" title="프로젝트 편집" style="display: none;">
+                    <!-- 편집 버튼 (로그인 시 노출) -->
+                    <button class="mini-edit-btn edit-mode-trigger" title="편집" style="display: none;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -87,7 +87,7 @@
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                 </button>
             </div>
-            <div style="text-align: center; margin-top: 2rem; opacity: 0.2; font-size: 0.6rem; letter-spacing: 5px;">
+            <div style="text-align: center; margin-top: 2rem; opacity: 0.1; font-size: 0.5rem; letter-spacing: 5px;">
                 DRAG TO EXPLORE
             </div>
         </section>
@@ -97,7 +97,7 @@
 
     <footer class="footer">
         <p>&copy; 2026 WEBPORTPOILO</p>
-        <button id="clear-storage" class="reset-link auth-only-ui" style="display: none;">데이터 초기화</button>
+        <button id="clear-storage" class="reset-link" style="display: none;">데이터 초기화</button>
     </footer>
 
     <script src="app.js"></script>
