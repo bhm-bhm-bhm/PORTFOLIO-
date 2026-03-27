@@ -277,22 +277,38 @@ body {
 
 .slider-nav-btn svg { width: 30px; height: 30px; stroke-width: 1.5; }
 
-/* [수정] 관리자 전용 요소 제어 ( Body 클래스 방식 ) */
-.mini-edit-btn, .reset-link, .add-cta-main {
-    display: none !important; /* 기본적으로 비활성화 */
+/* [수정] 관리자 전용 요소 제어 - JS 렌더링 중심 */
+.mini-edit-btn, .reset-link {
+    display: none !important; /* 로그인 전에는 숨김 */
 }
 
-/* 로그인이 확인된 상태에서만 강제 노출 */
+/* 로그인이 확인된 상태에서만 노출 */
 body.logged-in .mini-edit-btn, 
-body.logged-in .reset-link, 
-body.logged-in .add-cta-main {
+body.logged-in .reset-link {
     display: flex !important;
-    animation: fadeInAdmin 0.5s ease-out forwards;
 }
 
-@keyframes fadeInAdmin {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+/* + 버튼은 JS에서 필요할 때만 생성하므로 기본 스타일만 정의 */
+.add-cta-main {
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: 200;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.add-cta-main:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.1) rotate(90deg);
+    border-color: var(--kakao-yellow);
 }
 
 /* [고급화] 소프트 라운드 프로필 CTA */
