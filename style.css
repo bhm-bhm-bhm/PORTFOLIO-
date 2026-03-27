@@ -34,9 +34,9 @@ body {
 }
 
 .centered-logo {
-    font-size: 1.2rem;
+    font-size: 2.2rem; /* 훨씬 크고 시원하게 변경 */
     font-weight: 800;
-    letter-spacing: 15px;
+    letter-spacing: 10px; /* 크기가 커진 만큼 자간 통계적 안정화 */
     background: linear-gradient(90deg, #fff, #555);
     -webkit-background-clip: text;
     background-clip: text;
@@ -139,10 +139,10 @@ body.logged-in .title-edit-btn {
 .side-label {
     writing-mode: horizontal-tb;
     text-transform: uppercase;
-    letter-spacing: 8px;
-    font-size: 0.8rem;
+    letter-spacing: 12px;
+    font-size: 1.2rem; /* 알아보기 쉽게 크기 확대 */
     color: var(--text-secondary);
-    font-weight: 400;
+    font-weight: 600; /* 시인성을 위해 굵기 증가 */
 }
 
 /* About Section */
