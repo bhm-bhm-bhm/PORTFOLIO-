@@ -91,14 +91,7 @@ body {
 }
 
 /* About Section */
-.intro-section {
-    max-width: 1300px;
-    margin: 0 auto 12rem;
-    padding: 0 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
+.intro-section { max-width: 1300px; margin: 0 auto 12rem; padding: 0 2rem; display: flex; flex-direction: column; align-items: center; gap: 2rem; }
 
 .side-label {
     font-size: 1rem;
@@ -276,12 +269,7 @@ body {
 
 
 /* 섹션 타이틀 옆 미니 편집 버튼 */
-.section-header-flex {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
+.section-header-flex { display: flex; align-items: center; justify-content: center; gap: 1.5rem; width: 100%; margin-bottom: 2.5rem; }
 
 .mini-edit-btn {
     width: 32px;
@@ -307,3 +295,4 @@ body {
     background: var(--accent-color);
     color: #000;
 }
+
