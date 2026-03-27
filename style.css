@@ -94,10 +94,13 @@ body.logged-in .title-edit-btn {
     padding: 0.6rem 1.4rem;
     border-radius: 8px;
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: var(--transition);
     border: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .kakao-simple-btn:hover {
