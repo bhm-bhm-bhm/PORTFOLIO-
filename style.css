@@ -19,7 +19,7 @@
 
 body {
     background-color: var(--bg-color);
-    background-image: radial-gradient(circle at 50% -10%, #1a1a1c 0%, #000000 100%);
+    background-image: radial-gradient(circle at 50% -10%, #1a1a1c 0%, #000000 80%), radial-gradient(circle at 0% 0%, rgba(0, 255, 255, 0.05) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
     color: var(--text-primary);
     font-family: 'Outfit', 'Noto Sans KR', sans-serif;
     line-height: 1.6;
@@ -80,7 +80,7 @@ body {
 .centered-logo {
     font-size: 1.8rem;
     font-weight: 200;
-    letter-spacing: 15px;
+    letter-spacing: 15px; background: linear-gradient(90deg, #fff, #555); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
     text-transform: uppercase;
 }
 
@@ -160,7 +160,7 @@ body {
 }
 
 .project-item {
-    flex: 0 0 70vw; /* 가운데 하나가 크게 보이고 양 옆이 15%씩 보이도록 설정 */
+    flex: 0 0 70vw; /* 가?�데 ?�나가 ?�게 보이�????�이 15%??보이?�록 ?�정 */
     scroll-snap-align: center;
     position: relative;
 }
@@ -193,7 +193,7 @@ body {
 
 /* Thumbnail & Icon Styles */
 .add-cta-main {
-    width: 60px; /* 기능 발동 범위 제한 */
+    width: 60px; /* 기능 발동 범위 ?�한 */
     height: 60px;
     display: flex;
     justify-content: center;
@@ -204,7 +204,7 @@ body {
     color: var(--text-secondary);
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
-    border-radius: 50%; /* 원형으로 범위 시각화 */
+    border-radius: 50%; /* ?�형?�로 범위 ?�각??*/
     transition: var(--transition);
 }
 
@@ -220,7 +220,7 @@ body {
     pointer-events: none; /* Dragging fix */
 }
 
-/* Edit Mode 삭제 버튼 */
+/* Edit Mode ??�� 버튼 */
 .delete-btn {
     position: absolute;
     top: 20px; right: 20px;
@@ -273,3 +273,4 @@ body {
     align-items: center;
     position: relative;
 }
+
